@@ -6,12 +6,16 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <Folder Include="Recipes\" />
+        <Folder Include="Recipes\Commands\" />
+        <Folder Include="Recipes\Handlers\" />
+        <Folder Include="Recipes\Mappers\" />
+        <Folder Include="Recipes\Queries\" />
         <Folder Include="Users\Utils\" />
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="14.0.0" />
       <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+      <PackageReference Include="MassTransit" Version="8.3.7" />
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="OneOf" Version="3.0.271" />
     </ItemGroup>

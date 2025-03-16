@@ -73,7 +73,8 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
     {
         var userToCreate = mapper.Map<UserModel>(user);
 
-        var createdUser = await usersRepository.CreateUserAsync(userToCreate, token);
+        var createdUser = await usersRepository.CreateUserAsync(userToCreate, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         await usersRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
@@ -94,6 +95,10 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
             return new Error(ErrorType.OperationFailed);
         }
 
+        var cacheKey = $"{UserCacheKeyPrefix}_{user.Id}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
+
         return new Success();
     }
 
@@ -108,6 +113,10 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
         {
             return new Error(ErrorType.OperationFailed);
         }
+
+        var cacheKey = $"{UserCacheKeyPrefix}_{user.Id}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         return new Success();
     }

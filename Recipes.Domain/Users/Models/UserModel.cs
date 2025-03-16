@@ -11,4 +11,6 @@ public class UserModel : IStorableEntity
     public string UserName { get; set; } = null!;
 
     public string UserImageLink { get; set; } = null!;
+
+    public bool SendNewsletter { get; set; } = false;
 }

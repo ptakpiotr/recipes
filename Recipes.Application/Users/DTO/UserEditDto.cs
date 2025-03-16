@@ -4,5 +4,7 @@ public class UserEditDto
 {
     public Guid Id { get; set; }
 
-    public string UserImageLink { get; set; } = null!;
+    public string? UserImageLink { get; set; }
+
+    public bool? SendNewsletter { get; set; }
 }

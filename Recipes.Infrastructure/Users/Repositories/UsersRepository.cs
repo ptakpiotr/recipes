@@ -36,7 +36,15 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
             return UpdateType.UpdateFailed;
         }
 
-        userForModification.UserImageLink = user.UserImageLink;
+        if (user.UserImageLink is {} userImageLink)
+        {
+            userForModification.UserImageLink = userImageLink;
+        }
+
+        if (user.SendNewsletter is { } sendNewsletter)
+        {
+            userForModification.SendNewsletter = sendNewsletter;
+        }
 
         return UpdateType.UpdateSuccessful;
     }

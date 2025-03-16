@@ -3,6 +3,7 @@
 public interface IUserService
 {
     Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByIdAsync(Guid userId, CancellationToken token);
+    
     Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(CancellationToken token);
 
     Task<OneOf<SuccessWithValue<UserReadDto>, Error>> CreateUserAsync(UserCreateDto user, CancellationToken token);
