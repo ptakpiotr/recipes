@@ -53,6 +53,21 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
         return new SuccessWithValue<UserReadDto>(result);
     }
 
+    public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(CancellationToken token)
+    {
+        var usersFromDb = await usersRepository.GetUsersForNewseletterAsync(token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (usersFromDb.Count == 0)
+        {
+            return new Error(ErrorType.NotFound);
+        }
+
+        var result = mapper.Map<IList<UserReadDto>>(usersFromDb);
+
+        return new SuccessWithValue<IReadOnlyList<UserReadDto>>(result.AsReadOnly().ToList());
+    }
+
     public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(
         CancellationToken token)
     {

@@ -11,4 +11,9 @@
       <ProjectReference Include="..\Recipes.Infrastructure\Recipes.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Scalar.AspNetCore" Version="2.0.36" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.3.1" />
+    </ItemGroup>
+
 </Project>

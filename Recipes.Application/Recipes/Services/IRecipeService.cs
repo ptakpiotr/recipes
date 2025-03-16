@@ -6,9 +6,12 @@ public interface IRecipeService
 {
     Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> GetRecipeByIdAsync(Guid recipeId, CancellationToken token);
 
+    Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> GetRandomRecipeAsync(CancellationToken token);
+
     Task<OneOf<SuccessWithValue<IReadOnlyList<RecipeReadDto>>, Error>> GetAllRecipesAsync(CancellationToken token);
 
-    Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> CreateRecipeAsync(RecipeCreateDto recipe, CancellationToken token);
+    Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> CreateRecipeAsync(RecipeCreateDto recipe,
+        CancellationToken token);
 
     Task<OneOf<Success, Error>> UpdateRecipeAsync(RecipeEditDto recipe, Guid userId, CancellationToken token);
 

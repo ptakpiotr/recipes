@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Recipes\Jobs\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="AWSSDK.S3" Version="3.7.415.18" />
       <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
       <PackageReference Include="Hangfire.AspNetCore" Version="1.8.18" />

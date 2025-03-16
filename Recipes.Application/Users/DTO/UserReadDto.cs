@@ -4,6 +4,8 @@ public class UserReadDto
 {
     public Guid Id { get; init; }
 
+    public string UserEmail { get; set; } = null!;
+
     public string UserName { get; init; } = null!;
 
     public string UserImageLink { get; init; } = null!;

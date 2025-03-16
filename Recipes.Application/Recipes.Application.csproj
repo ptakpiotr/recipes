@@ -6,10 +6,6 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <Folder Include="Recipes\Commands\" />
-        <Folder Include="Recipes\Handlers\" />
-        <Folder Include="Recipes\Mappers\" />
-        <Folder Include="Recipes\Queries\" />
         <Folder Include="Users\Utils\" />
     </ItemGroup>
     <ItemGroup>

@@ -19,6 +19,11 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
         return await ctx.Users.AsNoTracking().ToListAsync(token).ConfigureAwait(false);
     }
 
+    public async Task<IList<UserModel>> GetUsersForNewseletterAsync(CancellationToken token)
+    {
+        return await ctx.Users.Where(x => x.SendNewsletter).AsNoTracking().ToListAsync(token).ConfigureAwait(false);
+    }
+
     public async Task<UserModel?> CreateUserAsync(UserModel user, CancellationToken token)
     {
         await ctx.Users.AddAsync(user, token).ConfigureAwait(false);
@@ -36,7 +41,7 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
             return UpdateType.UpdateFailed;
         }
 
-        if (user.UserImageLink is {} userImageLink)
+        if (user.UserImageLink is { } userImageLink)
         {
             userForModification.UserImageLink = userImageLink;
         }

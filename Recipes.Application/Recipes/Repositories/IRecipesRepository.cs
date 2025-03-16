@@ -8,6 +8,8 @@ public interface IRecipesRepository
 {
     Task<RecipeModel> GetRecipeByIdAsync(Guid recipeId, CancellationToken token);
 
+    Task<RecipeModel> GetRandomRecipeAsync(CancellationToken token);
+
     Task<IList<RecipeModel>> GetRecipesAsync(CancellationToken token);
 
     Task<RecipeModel?> CreateRecipeAsync(RecipeModel recipe, CancellationToken token);
