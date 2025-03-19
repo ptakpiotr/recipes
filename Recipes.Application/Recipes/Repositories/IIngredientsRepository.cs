@@ -7,6 +7,8 @@ namespace Recipes.Application.Recipes.Repositories;
 public interface IIngredientsRepository
 {
     Task<IList<IngredientModel>> GetIngredientsForRecipeAsync(Guid recipeId, CancellationToken token);
+    
+    Task<IngredientModel?> GetIngredientByIdAsync(Guid id, CancellationToken token);
 
     Task<IngredientModel?> CreateIngredientAsync(IngredientModel ingredient, CancellationToken token);
 

@@ -13,8 +13,5 @@ public class RolesEntityConfiguration : IEntityTypeConfiguration<RoleModel>
         builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
 
         builder.HasIndex(x => x.Role).IsUnique();
-
-        builder.HasMany<UserModel>("Users")
-            .WithOne("Role");
     }
 }

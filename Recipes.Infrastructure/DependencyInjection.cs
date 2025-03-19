@@ -1,15 +1,22 @@
-﻿using Hangfire;
+﻿using Amazon.S3;
+using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Recipes.Application.Common.Services;
+using Recipes.Application.Recipes.Events;
+using Recipes.Application.Recipes.Repositories;
+using Recipes.Application.Recipes.Services;
 using Recipes.Application.Users.Repositories;
 using Recipes.Application.Users.Services;
 using Recipes.Infrastructure.Common.Data;
 using Recipes.Infrastructure.Common.Options;
 using Recipes.Infrastructure.Common.Services;
 using Recipes.Infrastructure.Recipes.Jobs;
+using Recipes.Infrastructure.Recipes.Repositories;
+using Recipes.Infrastructure.Recipes.Services;
 using Recipes.Infrastructure.Users.Repositories;
 using Recipes.Infrastructure.Users.Services;
 
@@ -18,13 +25,31 @@ namespace Recipes.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureDependencies(this IServiceCollection services,
-        StorageOptions storageOptions)
+        IConfiguration configuration)
     {
+        StorageOptions storageOptions = new();
+        S3Options s3Options = new();
+        EmailOptions emailOptions = new();
+
+        configuration.GetSection("Storage").Bind(storageOptions);
+        configuration.GetSection("S3").Bind(s3Options);
+        configuration.GetSection("Email").Bind(emailOptions);
+
         services.AddDbContext<AppDbContext>(opts => { opts.UseNpgsql(storageOptions.App); });
 
         services.AddStackExchangeRedisCache(opts => { opts.Configuration = storageOptions.Redis; });
 
         services.AddHangfire(opts => { opts.UsePostgreSqlStorage(storageOptions.Hangfire); });
+
+        services.AddFluentEmail(emailOptions.Email)
+            .AddSmtpSender(emailOptions.Host, emailOptions.Port,
+                emailOptions.Email, emailOptions.Password);
+
+        services.AddSingleton<IAmazonS3, AmazonS3Client>((_) => new AmazonS3Client(new AmazonS3Config()
+        {
+            ServiceURL = s3Options.ConnStr,
+            ForcePathStyle = true
+        }));
 
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
@@ -33,9 +58,21 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
 
+        services.AddScoped<IIngredientsRepository, IngredientsRepository>();
+        services.AddScoped<IRatingsRepository, RatingsRepository>();
+        services.AddScoped<IRecipesRepository, RecipesRepository>();
+
+        services.AddScoped<IRatingsService, RatingsService>();
+        services.AddScoped<IIngredientsService, IngredientsService>();
+        services.AddScoped<IRecipeService, RecipeService>();
+
         services.AddScoped<NewsletterRecurringJob>();
 
-        services.AddMassTransit(opts => { });
+        services.AddMassTransit(opts =>
+        {
+            opts.AddConsumersFromNamespaceContaining<SendNewsletterDataEvent>();
+            opts.UsingInMemory((context, cfg) => { cfg.ConfigureEndpoints(context); });
+        });
 
         return services;
     }

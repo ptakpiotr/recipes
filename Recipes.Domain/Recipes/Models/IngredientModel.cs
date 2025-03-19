@@ -11,4 +11,6 @@ public class IngredientModel : IStorableEntity
     public string Description { get; set; } = null!;
     
     public int Order { get; set; }
+
+    public RecipeModel Recipe { get; set; } = null!;
 }

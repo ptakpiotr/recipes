@@ -15,8 +15,5 @@ public class UsersEntityConfiguration : IEntityTypeConfiguration<UserModel>
         builder.Property(x=>x.UserName).HasMaxLength(100).IsRequired();
 
         builder.Property(x=>x.UserImageLink).HasMaxLength(255).IsRequired();
-
-        builder.HasOne<RoleModel>("Role")
-            .WithMany("Users");
     }
 }

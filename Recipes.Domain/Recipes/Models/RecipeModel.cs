@@ -18,4 +18,8 @@ public class RecipeModel : IStorableEntity
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }
+
+    public ICollection<IngredientModel> Ingredients { get; set; } = [];
+    
+    public ICollection<RatingModel> Ratings { get; set; } = [];
 }

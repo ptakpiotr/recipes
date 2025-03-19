@@ -6,9 +6,9 @@ namespace Recipes.Application.Recipes.Repositories;
 
 public interface IRecipesRepository
 {
-    Task<RecipeModel> GetRecipeByIdAsync(Guid recipeId, CancellationToken token);
+    Task<RecipeModel?> GetRecipeByIdAsync(Guid recipeId, CancellationToken token);
 
-    Task<RecipeModel> GetRandomRecipeAsync(CancellationToken token);
+    Task<RecipeModel?> GetRandomRecipeAsync(CancellationToken token);
 
     Task<IList<RecipeModel>> GetRecipesAsync(CancellationToken token);
 

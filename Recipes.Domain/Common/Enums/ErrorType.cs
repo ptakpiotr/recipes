@@ -5,5 +5,6 @@ public enum ErrorType
     Validation,
     Parse,
     OperationFailed,
-    NotFound
+    NotFound,
+    Unauthorized
 }

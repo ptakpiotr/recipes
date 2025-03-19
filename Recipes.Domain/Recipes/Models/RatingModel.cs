@@ -11,4 +11,6 @@ public class RatingModel : IStorableEntity
     public Guid RecipeId { get; set; }
 
     public Guid UserId { get; set; }
+
+    public RecipeModel Recipe { get; set; } = null!;
 }
