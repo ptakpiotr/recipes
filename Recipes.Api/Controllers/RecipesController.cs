@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
+using Recipes.Infrastructure.Common.Identity;
 
 namespace Recipes.Api.Controllers;
 
@@ -47,6 +49,7 @@ public class RecipesController(ISender sender) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = IdentityConstants.AuthzPolicy)]
     public async Task<IActionResult> DeleteRecipe([FromRoute] Guid id, CancellationToken token)
     {
         RecipeDeleteDto dto = new()
@@ -54,8 +57,14 @@ public class RecipesController(ISender sender) : ControllerBase
             Id = id
         };
 
-        //TODO: get user id
-        DeleteRecipeCommand cmd = new(dto, Guid.NewGuid());
+        var parseResult = Guid.TryParse(HttpContext.Items["user-id"]?.ToString(), out var userId);
+
+        if (!parseResult)
+        {
+            return BadRequest();
+        }
+
+        DeleteRecipeCommand cmd = new(dto, userId);
 
         var res = await sender.Send(cmd, token);
 
@@ -73,10 +82,17 @@ public class RecipesController(ISender sender) : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = IdentityConstants.AuthzPolicy)]
     public async Task<IActionResult> UpdateRecipe([FromBody] RecipeEditDto dto, CancellationToken token)
     {
-        //TODO: get user id
-        UpdateRecipeCommand cmd = new(dto, Guid.NewGuid());
+        var parseResult = Guid.TryParse(HttpContext.Items["user-id"]?.ToString(), out var userId);
+
+        if (!parseResult)
+        {
+            return BadRequest();
+        }
+        
+        UpdateRecipeCommand cmd = new(dto, userId);
 
         var res = await sender.Send(cmd, token);
 

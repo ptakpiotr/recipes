@@ -5,7 +5,9 @@ namespace Recipes.Application.Users.Repositories;
 public interface IUsersRepository
 {
     Task<UserModel?> GetUserByIdAsync(Guid userId, CancellationToken token);
-    
+
+    Task<UserModel?> GetUserByExternalIdAsync(string externalId, CancellationToken token);
+
     Task<IList<UserModel>> GetUsersAsync(CancellationToken token);
 
     Task<IList<UserModel>> GetUsersForNewseletterAsync(CancellationToken token);

@@ -1,9 +1,7 @@
-using Hangfire;
-using Hangfire.Common;
 using Recipes.Application;
 using Recipes.Infrastructure;
+using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
-using Recipes.Infrastructure.Recipes.Jobs;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +24,8 @@ builder.Services.AddOptions<EmailOptions>()
 builder.Services.AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -38,10 +38,22 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-using var jobServiceScope = app.Services.CreateScope();
-var job = jobServiceScope.ServiceProvider.GetService<NewsletterRecurringJob>();
+app.MapGet("/", () => Results.Ok());
 
-RecurringJob.AddOrUpdate("newsletter-recurring-job", () => job.ExecuteAsync(CancellationToken.None),
-    Cron.Weekly(DayOfWeek.Monday));
+app.MapGet("/logout", () => Results.SignOut(new()
+{
+    RedirectUri = "/"
+}, [IdentityConstants.CookieAuthScheme]));
+
+app.MapGet("/login", () => Results.Challenge(new()
+{
+    RedirectUri = "/"
+}, [IdentityConstants.GithubAuthScheme]));
+
+// using var jobServiceScope = app.Services.CreateScope();
+// var job = jobServiceScope.ServiceProvider.GetService<NewsletterRecurringJob>();
+//
+// RecurringJob.AddOrUpdate("newsletter-recurring-job", () => job.ExecuteAsync(CancellationToken.None),
+//     Cron.Weekly(DayOfWeek.Monday));
 
 app.Run();

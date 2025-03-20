@@ -33,7 +33,6 @@ public class RecipeService(
 
             if (recipe is null)
             {
-                //TODO: consider using message builder
                 return new Error(ErrorType.Parse, nameof(recipe));
             }
 

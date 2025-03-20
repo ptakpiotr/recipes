@@ -33,7 +33,6 @@ public class RoleService(
 
             if (role is null)
             {
-                //TODO: consider using message builder
                 return new Error(ErrorType.Parse, nameof(role));
             }
 

@@ -15,7 +15,6 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
 {
     private const string UserCacheKeyPrefix = "User";
 
-    //TODO: consider to use ValueTask
     public async Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByIdAsync(Guid userId,
         CancellationToken token)
     {
@@ -28,7 +27,6 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
 
             if (user is null)
             {
-                //TODO: consider using message builder
                 return new Error(ErrorType.Parse, nameof(user));
             }
 
@@ -53,7 +51,24 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
         return new SuccessWithValue<UserReadDto>(result);
     }
 
-    public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(CancellationToken token)
+    public async Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByExternalIdAsync(string externalId,
+        CancellationToken token)
+    {
+        var userFromDb = await usersRepository.GetUserByExternalIdAsync(externalId, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (userFromDb is null)
+        {
+            return new Error(ErrorType.NotFound);
+        }
+
+        var result = mapper.Map<UserReadDto>(userFromDb);
+
+        return new SuccessWithValue<UserReadDto>(result);
+    }
+
+    public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(
+        CancellationToken token)
     {
         var usersFromDb = await usersRepository.GetUsersForNewseletterAsync(token)
             .ConfigureAwait(ConfigureAwaitOptions.None);

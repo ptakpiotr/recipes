@@ -14,6 +14,11 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
         return ctx.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, token);
     }
 
+    public Task<UserModel?> GetUserByExternalIdAsync(string externalId, CancellationToken token)
+    {
+        return ctx.Users.AsNoTracking().FirstOrDefaultAsync(u => u.ExternalId == externalId, token);
+    }
+
     public async Task<IList<UserModel>> GetUsersAsync(CancellationToken token)
     {
         return await ctx.Users.AsNoTracking().ToListAsync(token).ConfigureAwait(false);

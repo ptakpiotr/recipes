@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using System.Text.Json;
+using Amazon.S3;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
@@ -12,6 +13,7 @@ using Recipes.Application.Recipes.Services;
 using Recipes.Application.Users.Repositories;
 using Recipes.Application.Users.Services;
 using Recipes.Infrastructure.Common.Data;
+using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
 using Recipes.Infrastructure.Common.Services;
 using Recipes.Infrastructure.Recipes.Jobs;
@@ -31,9 +33,11 @@ public static class DependencyInjection
         S3Options s3Options = new();
         EmailOptions emailOptions = new();
 
-        configuration.GetSection("Storage").Bind(storageOptions);
+        configuration.GetSection("ConnectionStrings").Bind(storageOptions);
         configuration.GetSection("S3").Bind(s3Options);
         configuration.GetSection("Email").Bind(emailOptions);
+
+        services.AddIdentityConfiguration(configuration);
 
         services.AddDbContext<AppDbContext>(opts => { opts.UseNpgsql(storageOptions.App); });
 

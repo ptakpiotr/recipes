@@ -1,13 +1,16 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Recipes.Application.Users.Commands;
 using Recipes.Application.Users.DTO;
 using Recipes.Application.Users.Queries;
+using Recipes.Infrastructure.Common.Identity;
 
 namespace Recipes.Api.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
+[Authorize(Policy = IdentityConstants.AdminPolicy)]
 public class RolesController(ISender sender) : ControllerBase
 {
     [HttpGet]
