@@ -3,9 +3,12 @@
 public interface IUserService
 {
     Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByIdAsync(Guid userId, CancellationToken token);
-    Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByExternalIdAsync(string externalId, CancellationToken token);
 
-    Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(CancellationToken token);
+    Task<OneOf<SuccessWithValue<UserReadDto>, Error>> GetUserByExternalIdAsync(string externalId,
+        CancellationToken token);
+
+    Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(
+        CancellationToken token);
 
     Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(CancellationToken token);
 

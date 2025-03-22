@@ -1,6 +1,6 @@
 ﻿namespace Recipes.Application.Users.Validators;
 
-internal class UserDeleteValidator : AbstractValidator<UserDeleteDto>
+public class UserDeleteValidator : AbstractValidator<UserDeleteDto>
 {
     public UserDeleteValidator()
     {
