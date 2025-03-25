@@ -7,7 +7,7 @@ public class IngredientCreateValidator : AbstractValidator<IngredientCreateDto>
     public IngredientCreateValidator()
     {
         RuleFor(x => x.RecipeId).NotEqual(Guid.Empty);
-        RuleFor(x=>x.Description).NotEmpty();
-        RuleFor(x=>x.Order).GreaterThan(0);
+        RuleFor(x => x.Description).NotEmpty();
+        RuleFor(x => x.Order).GreaterThan(0);
     }
 }
