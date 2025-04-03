@@ -1,8 +1,10 @@
+using AspNetCore.Scalar;
+using Hangfire;
 using Recipes.Application;
 using Recipes.Infrastructure;
 using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
-using Scalar.AspNetCore;
+using Recipes.Infrastructure.Recipes.Jobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -37,12 +42,21 @@ app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.MapScalarApiReference();
+    app.UseScalar(options =>
+    {
+        options.RoutePrefix = "scalar";
+        options.UseTheme(Theme.Moon);
+    });
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", () => Results.Ok());
+app.MapReverseProxy();
+
+app.MapGet("/", () => Results.LocalRedirect("/app"));
 
 app.MapGet("/logout", () => Results.SignOut(new()
 {
@@ -54,10 +68,14 @@ app.MapGet("/login", () => Results.Challenge(new()
     RedirectUri = "/"
 }, [IdentityConstants.GithubAuthScheme]));
 
-// using var jobServiceScope = app.Services.CreateScope();
-// var job = jobServiceScope.ServiceProvider.GetService<NewsletterRecurringJob>();
-//
-// RecurringJob.AddOrUpdate("newsletter-recurring-job", () => job.ExecuteAsync(CancellationToken.None),
-//     Cron.Weekly(DayOfWeek.Monday));
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    using var jobServiceScope = app.Services.CreateScope();
+    var job = jobServiceScope.ServiceProvider.GetRequiredService<NewsletterRecurringJob>();
+    var client = jobServiceScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+
+    client.AddOrUpdate("newsletter-recurring-job", () => job.ExecuteAsync(CancellationToken.None),
+        Cron.Weekly(DayOfWeek.Monday));
+});
 
 app.Run();

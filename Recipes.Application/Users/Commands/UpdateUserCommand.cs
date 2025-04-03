@@ -2,4 +2,4 @@
 
 namespace Recipes.Application.Users.Commands;
 
-public record UpdateUserCommand(UserEditDto User) : IRequest<OneOf<CommandStatus, Error>>;
+public record UpdateUserCommand(UserEditDto User) : IRequest<OneOf<CommandStatus, Error>>, IValidate;

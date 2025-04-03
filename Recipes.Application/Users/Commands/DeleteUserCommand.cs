@@ -2,4 +2,4 @@
 
 namespace Recipes.Application.Users.Commands;
 
-public record DeleteUserCommand(UserDeleteDto User) : IRequest<OneOf<CommandStatus, Error>>;
+public record DeleteUserCommand(UserDeleteDto User) : IRequest<OneOf<CommandStatus, Error>>, IValidate;

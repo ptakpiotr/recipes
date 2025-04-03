@@ -13,13 +13,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.0.36"/>
+        <PackageReference Include="AspNetCore.Scalar" Version="1.1.8"/>
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.0.0" />
+        <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
     </ItemGroup>
 
     <ItemGroup>
