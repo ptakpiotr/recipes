@@ -13,13 +13,13 @@ public class RecipeModel : IStorableEntity
 
     public string Description { get; set; } = null!;
 
-    public ICollection<RecipeType> Types { get; set; } = [];
+    public IList<RecipeType> Types { get; set; } = [];
 
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }
 
-    public ICollection<IngredientModel> Ingredients { get; set; } = [];
+    public IList<IngredientModel> Ingredients { get; set; } = [];
     
-    public ICollection<RatingModel> Ratings { get; set; } = [];
+    public IList<RatingModel> Ratings { get; set; } = [];
 }

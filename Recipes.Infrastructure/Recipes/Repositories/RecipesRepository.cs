@@ -64,7 +64,7 @@ public class RecipesRepository(AppDbContext ctx, IMapper mapper) : IRecipesRepos
 
         if (recipe.Types.Count > 0)
         {
-            recipeForModification.Types = recipe.Types;
+            recipeForModification.Types = recipe.Types.ToList();
         }
 
         return UpdateType.UpdateSuccessful;

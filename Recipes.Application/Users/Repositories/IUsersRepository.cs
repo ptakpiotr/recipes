@@ -18,5 +18,7 @@ public interface IUsersRepository
     
     Task<DeleteType> DeleteUserAsync(Guid userId, CancellationToken token);
     
+    Task<bool> CheckIfUserAdminAsync(Guid userId, CancellationToken token);
+    
     Task SaveChangesAsync(CancellationToken token);
 }

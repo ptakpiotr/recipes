@@ -8,6 +8,7 @@ import {
   MdLogout,
   MdAdminPanelSettings,
 } from "vue-icons-plus/md";
+import { serverUrl } from "../utils/envVars";
 
 const router = useRouter();
 const currentRoute = ref("");
@@ -50,7 +51,7 @@ router.afterEach(() => {
           <RouterLink to="/admin">
             <p
               :class="`${'app-header-link'}${
-                currentRoute === 'about' ? ' active' : ''
+                currentRoute === 'admin' ? ' active' : ''
               }`"
             >
               Panel admina <MdAdminPanelSettings />
@@ -58,14 +59,14 @@ router.afterEach(() => {
           </RouterLink>
         </li>
         <li>
-          <RouterLink to="/login">
+          <a :href="`${serverUrl}/login`">
             <p class="app-header-link"><MdLogin /></p>
-          </RouterLink>
+          </a>
         </li>
         <li>
-          <RouterLink to="/logout">
+          <a :href="`${serverUrl}/logout`">
             <p class="app-header-link"><MdLogout /></p>
-          </RouterLink>
+          </a>
         </li>
       </ul>
     </nav>

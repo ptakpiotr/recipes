@@ -10,7 +10,7 @@ namespace Recipes.Api.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-[Authorize(Policy = IdentityConstants.AuthzPolicy)]
+[Authorize(Policy = IdentityConstants.AdminPolicy)]
 public class UsersController(ISender sender) : ControllerBase
 {
     [HttpGet]

@@ -14,13 +14,13 @@ public class RecipeReadDto
 
     public string? ImageUrl { get; set; }
 
-    public ICollection<RecipeType> Types { get; set; } = [];
+    public IList<RecipeType> Types { get; set; } = [];
 
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }
 
-    public ICollection<IngredientReadDto> Ingredients { get; set; } = [];
+    public IList<IngredientReadDto> Ingredients { get; set; } = [];
 
-    public ICollection<RatingReadDto> Ratings { get; set; } = [];
+    public IList<RatingReadDto> Ratings { get; set; } = [];
 }

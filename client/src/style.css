@@ -1,1 +1,4 @@
 @import "tailwindcss";
+.ag-cell-value.ag-cell {
+  display: flex;
+}

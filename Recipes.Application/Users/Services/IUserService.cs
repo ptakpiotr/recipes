@@ -9,6 +9,8 @@ public interface IUserService
 
     Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetUsersForNewseletterAsync(
         CancellationToken token);
+    
+    Task<OneOf<SuccessWithValue<bool>, Error>> CheckIfUserAdminAsync(Guid userId, CancellationToken token);
 
     Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(CancellationToken token);
 

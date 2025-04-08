@@ -2,6 +2,7 @@
 using Recipes.Application.Users.DTO;
 using Recipes.Application.Users.Repositories;
 using Recipes.Domain.Common.Enums;
+using Recipes.Domain.Users.Enums;
 using Recipes.Domain.Users.Models;
 using Recipes.Infrastructure.Common.Data;
 
@@ -11,12 +12,13 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
 {
     public Task<UserModel?> GetUserByIdAsync(Guid userId, CancellationToken token)
     {
-        return ctx.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, token);
+        return ctx.Users.Include(u => u.Roles).AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId, token);
     }
 
     public Task<UserModel?> GetUserByExternalIdAsync(string externalId, CancellationToken token)
     {
-        return ctx.Users.AsNoTracking().FirstOrDefaultAsync(u => u.ExternalId == externalId, token);
+        return ctx.Users.Include(u => u.Roles).AsNoTracking()
+            .FirstOrDefaultAsync(u => u.ExternalId == externalId, token);
     }
 
     public async Task<IList<UserModel>> GetUsersAsync(CancellationToken token)
@@ -31,8 +33,15 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
 
     public async Task<UserModel?> CreateUserAsync(UserModel user, CancellationToken token)
     {
+        user.Roles =
+        [
+            new RoleModel()
+            {
+                Name = "Użytkownik",
+                Role = RoleType.User
+            }
+        ];
         await ctx.Users.AddAsync(user, token).ConfigureAwait(false);
-
         return user;
     }
 
@@ -72,6 +81,15 @@ public class UsersRepository(AppDbContext ctx) : IUsersRepository
         ctx.Remove(userForDeletion);
 
         return DeleteType.DeleteSuccessful;
+    }
+
+    public async Task<bool> CheckIfUserAdminAsync(Guid userId, CancellationToken token)
+    {
+        var user = await ctx.Users.Include(u => u.Roles)
+            .FirstOrDefaultAsync(x => x.Id == userId, token)
+            .ConfigureAwait(false);
+
+        return user?.Roles.Any(x => x.Role == RoleType.Admin) == true;
     }
 
     public Task SaveChangesAsync(CancellationToken token)

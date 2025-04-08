@@ -1,32 +1,76 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import type { IUser } from "../../Types";
+import type { IUser, IRole } from "../../Types";
 import axios from "axios";
-import RevoGrid from "@revolist/vue3-datagrid";
+import { AgGridVue } from "ag-grid-vue3";
+import AvatarRenderer from "./renderers/AvatarRenderer.vue";
+import DeleteUserRenderer from "./renderers/DeleteUserRenderer.vue";
 
-const columns = [
+const usersColumns = [
   {
-    prop: "userImageLink",
-    name: "Avatar",
+    field: "userImageLink",
+    headerName: "Avatar",
+    cellRenderer: AvatarRenderer,
   },
   {
-    prop: "userName",
-    name: "Nazwa użytkownika",
+    field: "userName",
+    headerName: "Użytkownik",
+    filter: "agTextColumnFilter",
+  },
+  {
+    field: "id",
+    headerName: "Akcje",
+    cellRenderer: DeleteUserRenderer,
   },
 ];
 
-const rows = ref<IUser[]>([]);
+const groupsColumns = [
+  {
+    field: "name",
+    headerName: "Nazwa grupy",
+  },
+  {
+    field: "role",
+    headerName: "Typ roli",
+  },
+];
+
+const usersRows = ref<IUser[]>([]);
+const groupsRows = ref<IRole[]>([]);
+
+// TODO: put admin check globally
 
 onMounted(async () => {
-  const data = await axios.get<{ value: IUser[] }>("/api/users");
+  const usersData = await axios.get<{ value: IUser[] }>("/api/users");
+  const groupsData = await axios.get<{ value: IRole[] }>("/api/roles");
 
-  if (data.status === 200) {
-    rows.value = data.data.value;
+  if (usersData.status === 200) {
+    usersRows.value = usersData.data.value;
+  }
+
+  if (groupsData.status === 200) {
+    groupsRows.value = groupsData.data.value;
   }
 });
 </script>
 <template>
   <div>
-    <RevoGrid :columns="columns" :rows="rows" />
+    <div class="bg-white m-3 p-4">
+      <p class="text-xl mb-3">Zarządzanie użytkownikami</p>
+      <AgGridVue
+        :row-data="usersRows"
+        :column-defs="usersColumns"
+        style="height: 30vh"
+      />
+    </div>
+
+    <div class="bg-white m-3 p-4">
+      <p class="text-xl mb-3">Zarządzanie rolami</p>
+      <AgGridVue
+        :row-data="groupsRows"
+        :column-defs="groupsColumns"
+        style="height: 30vh"
+      />
+    </div>
   </div>
 </template>

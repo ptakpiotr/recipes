@@ -48,6 +48,8 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
 
         var result = mapper.Map<UserReadDto>(userFromDb);
 
+        result.Roles = mapper.Map<ICollection<RoleReadDto>>(userFromDb.Roles);
+
         return new SuccessWithValue<UserReadDto>(result);
     }
 
@@ -81,6 +83,19 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
         var result = mapper.Map<IList<UserReadDto>>(usersFromDb);
 
         return new SuccessWithValue<IReadOnlyList<UserReadDto>>(result.AsReadOnly().ToList());
+    }
+
+    public async Task<OneOf<SuccessWithValue<bool>, Error>> CheckIfUserAdminAsync(Guid userId, CancellationToken token)
+    {
+        var isAdmin = await usersRepository.CheckIfUserAdminAsync(userId, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (!isAdmin)
+        {
+            return new Error(ErrorType.OperationFailed);
+        }
+
+        return new SuccessWithValue<bool>(isAdmin);
     }
 
     public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Recipes.Application.Users.DTO;
 using Recipes.Infrastructure.Common.Identity;
 
 namespace Recipes.Infrastructure.Common.Helpers;
@@ -16,6 +17,17 @@ public static class UserHelpers
             {
                 appUser.AddClaim(new Claim(i, value.ToString()!));
             }
+        }
+    }
+
+    internal static void ApplyRolesToExistingUser(this ClaimsIdentity? appUser, UserReadDto? userInfo)
+    {
+        ArgumentNullException.ThrowIfNull(appUser);
+        ArgumentNullException.ThrowIfNull(userInfo);
+
+        foreach (var role in userInfo.Roles)
+        {
+            appUser.AddClaim(new Claim(ClaimTypes.Role, role.Role.ToString()));
         }
     }
 }

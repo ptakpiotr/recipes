@@ -10,4 +10,8 @@ public class RoleModel : IStorableEntity
     public string Name { get; set; } = null!;
     
     public RoleType Role { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public UserModel User { get; set; } = null!;
 }

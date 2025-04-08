@@ -15,4 +15,6 @@ public class UserModel : IStorableEntity
     public string UserImageLink { get; set; } = null!;
 
     public bool SendNewsletter { get; set; } = false;
+
+    public ICollection<RoleModel> Roles { get; set; } = [];
 }

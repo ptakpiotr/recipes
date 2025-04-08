@@ -9,4 +9,6 @@ public class UserReadDto
     public string UserName { get; init; } = null!;
 
     public string UserImageLink { get; init; } = null!;
+
+    public ICollection<RoleReadDto> Roles { get; set; } = null!;
 }

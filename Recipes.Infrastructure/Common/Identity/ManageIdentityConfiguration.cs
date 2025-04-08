@@ -71,6 +71,11 @@ public static class ManageIdentityConfiguration
                         .GetUserByExternalIdAsync(externalId ?? string.Empty, CancellationToken.None)
                         .ConfigureAwait(ConfigureAwaitOptions.None);
 
+                    if (existingUser.IsT0)
+                    {
+                        appUser.ApplyRolesToExistingUser(existingUser.AsT0.Value);
+                    }
+
                     ctx.HttpContext.Items["user-id"] = existingUser.AsT0.Value.Id;
 
                     ctx.Response.Cookies.Append("user-login", userInfo["login"].ToString(), new()

@@ -36,6 +36,18 @@ public class RolesController(ISender sender) : ControllerBase
 
         return actionRes;
     }
+    
+    [HttpGet("/admin/{id:guid}")]
+    public async Task<IActionResult> IsUserAdmin([FromRoute] Guid id, CancellationToken token)
+    {
+        CheckIfAdminQuery query = new(id);
+
+        var res = await sender.Send(query, token);
+
+        var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        return actionRes;
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto dto, CancellationToken token)
