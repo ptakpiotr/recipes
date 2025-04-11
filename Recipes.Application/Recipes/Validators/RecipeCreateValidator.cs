@@ -1,16 +1,16 @@
-﻿using Recipes.Application.Recipes.DTO;
+﻿using Recipes.Application.Recipes.Commands;
 
 namespace Recipes.Application.Recipes.Validators;
 
-public class RecipeCreateValidator : AbstractValidator<RecipeCreateDto>
+public class RecipeCreateValidator : AbstractValidator<CreateRecipeCommand>
 {
     public RecipeCreateValidator()
     {
-        RuleFor(x => x.AuthorId).NotEqual(Guid.Empty);
-        RuleFor(x => x.Title).NotEmpty();
-        RuleFor(x => x.Description).NotEmpty();
-        RuleFor(x => x.Image).NotEmpty();
-        RuleFor(x => x.Types).NotEmpty();
-        RuleFor(x => x.Ingredients).NotEmpty();
+        RuleFor(x => x.Recipe.AuthorId).NotEqual(Guid.Empty);
+        RuleFor(x => x.Recipe.Title).NotEmpty();
+        RuleFor(x => x.Recipe.Description).NotEmpty();
+        RuleFor(x => x.Recipe.Image).NotNull();
+        RuleFor(x => x.Recipe.Types).NotEmpty();
+        RuleFor(x => x.Recipe.Ingredients).NotEmpty();
     }
 }

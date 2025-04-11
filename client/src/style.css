@@ -1,4 +1,8 @@
 @import "tailwindcss";
+body{
+  color: black;
+}
+
 .ag-cell-value.ag-cell {
   display: flex;
 }

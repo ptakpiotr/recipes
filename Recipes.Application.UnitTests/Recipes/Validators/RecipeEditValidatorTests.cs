@@ -1,4 +1,5 @@
-﻿using Recipes.Application.Recipes.DTO;
+﻿using Recipes.Application.Recipes.Commands;
+using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Validators;
 using Recipes.Application.UnitTests.Recipes.Validators.Fixtures;
 using Recipes.Domain.Recipes.Enums;
@@ -19,7 +20,7 @@ public class RecipeEditValidatorTests(RecipeEditValidator validator) : RecipeEdi
             Ingredients = []
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new UpdateRecipeCommand(dto, Guid.NewGuid()));
 
         Assert.True(res.IsValid);
     }
@@ -36,7 +37,7 @@ public class RecipeEditValidatorTests(RecipeEditValidator validator) : RecipeEdi
             Ingredients = []
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new UpdateRecipeCommand(dto, Guid.NewGuid()));
 
         Assert.False(res.IsValid);
     }

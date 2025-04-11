@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Recipes.Api.Filters;
 using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
@@ -37,8 +38,11 @@ public class RecipesController(ISender sender) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreateDto dto, CancellationToken token)
+    [Authorize]
+    [ServiceFilter<GroundUserInfoFilter>]
+    public async Task<IActionResult> CreateRecipe([FromForm] RecipeCreateDto dto, CancellationToken token)
     {
+        dto.AuthorId = Guid.Parse(HttpContext.Items["UserId"]?.ToString() ?? string.Empty);
         CreateRecipeCommand cmd = new(dto);
 
         var res = await sender.Send(cmd, token);
@@ -83,6 +87,7 @@ public class RecipesController(ISender sender) : ControllerBase
 
     [HttpPut]
     [Authorize(Policy = IdentityConstants.AuthzPolicy)]
+    [ServiceFilter<GroundUserInfoFilter>]
     public async Task<IActionResult> UpdateRecipe([FromBody] RecipeEditDto dto, CancellationToken token)
     {
         var parseResult = Guid.TryParse(HttpContext.Items["user-id"]?.ToString(), out var userId);

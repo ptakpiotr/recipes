@@ -1,12 +1,16 @@
 ﻿using System.Text.Json;
+using Amazon;
 using Amazon.S3;
+using FluentValidation;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MassTransit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Recipes.Application.Common.Services;
+using Recipes.Application.Common.Validators;
 using Recipes.Application.Recipes.Events;
 using Recipes.Application.Recipes.Repositories;
 using Recipes.Application.Recipes.Services;
@@ -49,8 +53,9 @@ public static class DependencyInjection
             .AddSmtpSender(emailOptions.Host, emailOptions.Port,
                 emailOptions.Email, emailOptions.Password);
 
-        services.AddSingleton<IAmazonS3, AmazonS3Client>((_) => new AmazonS3Client(new AmazonS3Config()
+        services.AddSingleton<IAmazonS3, AmazonS3Client>((_) => new AmazonS3Client(s3Options.AccessKeyId,s3Options.SecretAccessKey, new AmazonS3Config()
         {
+            RegionEndpoint = RegionEndpoint.USEast1,
             ServiceURL = s3Options.ConnStr,
             ForcePathStyle = true
         }));

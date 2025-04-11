@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Validators;
 using Recipes.Application.UnitTests.Recipes.Validators.Fixtures;
@@ -22,7 +23,7 @@ public class RecipeCreateValidatorTests(RecipeCreateValidator validator) : Recip
            Ingredients = []
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new CreateRecipeCommand(dto));
 
         Assert.True(res.IsValid);
     }
@@ -41,7 +42,7 @@ public class RecipeCreateValidatorTests(RecipeCreateValidator validator) : Recip
             Ingredients = []
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new CreateRecipeCommand(dto));
 
         Assert.False(res.IsValid);
     }

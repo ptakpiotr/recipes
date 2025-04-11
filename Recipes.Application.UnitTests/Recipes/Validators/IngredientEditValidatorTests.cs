@@ -1,4 +1,5 @@
-﻿using Recipes.Application.Recipes.DTO;
+﻿using Recipes.Application.Recipes.Commands;
+using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Validators;
 using Recipes.Application.UnitTests.Recipes.Validators.Fixtures;
 
@@ -16,7 +17,7 @@ public class IngredientEditValidatorTests(IngredientEditValidator validator) : I
             Order = order
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new UpdateIngredientCommand(dto, Guid.NewGuid()));
 
         Assert.True(res.IsValid);
     }
@@ -31,7 +32,7 @@ public class IngredientEditValidatorTests(IngredientEditValidator validator) : I
             Order = order
         };
 
-        var res = validator.Validate(dto);
+        var res = validator.Validate(new UpdateIngredientCommand(dto, Guid.NewGuid()));
 
         Assert.False(res.IsValid);
     }

@@ -16,7 +16,7 @@ public static class ManageIdentityConfiguration
 
         configuration.GetSection("Auth").Bind(authOptions);
 
-        services.AddAuthentication()
+        services.AddAuthentication(IdentityConstants.CookieAuthScheme)
             .AddCookie(IdentityConstants.CookieAuthScheme)
             .AddOAuth(IdentityConstants.GithubAuthScheme, opts =>
             {

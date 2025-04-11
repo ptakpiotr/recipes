@@ -36,7 +36,7 @@ public class RecipeService(
                 return new Error(ErrorType.Parse, nameof(recipe));
             }
 
-            recipe.ImageUrl = $"recipe_{recipe.Id}";
+            recipe.ImageUrl = $"/api/files/recipe_{recipe.Id}";
             
             return new SuccessWithValue<RecipeReadDto>(recipe);
         }
@@ -56,7 +56,7 @@ public class RecipeService(
 
         var result = mapper.Map<RecipeReadDto>(recipeFromDb);
 
-        result.ImageUrl = $"recipe_{result.Id}";
+        result.ImageUrl = $"/api/files/recipe_{result.Id}";
         
         return new SuccessWithValue<RecipeReadDto>(result);
     }
@@ -73,7 +73,7 @@ public class RecipeService(
 
         var result = mapper.Map<RecipeReadDto>(recipe);
         
-        result.ImageUrl = $"recipe_{result.Id}";
+        result.ImageUrl = $"/api/files/recipe_{result.Id}";
 
         return new SuccessWithValue<RecipeReadDto>(result);
     }
@@ -93,7 +93,7 @@ public class RecipeService(
 
         foreach (var recipe in result)
         {
-            recipe.ImageUrl = $"recipe_{recipe.Id}";
+            recipe.ImageUrl = $"/api/files/recipe_{recipe.Id}";
         }
 
         return new SuccessWithValue<IReadOnlyList<RecipeReadDto>>(result.AsReadOnly().ToList());

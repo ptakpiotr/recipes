@@ -1,4 +1,5 @@
-﻿using Recipes.Domain.Recipes.Enums;
+﻿using System.Text.Json.Serialization;
+using Recipes.Domain.Recipes.Enums;
 
 namespace Recipes.Application.Recipes.DTO;
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { MdAdd } from "vue-icons-plus/md";
 import type { IGeneralRecipe } from "../../Types";
 import GeneralRecipe from "./GeneralRecipe.vue";
 
@@ -17,7 +18,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div>
+  <div class="recipes">
     <GeneralRecipe
       v-for="r in recipes"
       :id="r.id"
@@ -29,3 +30,9 @@ onMounted(async () => {
     />
   </div>
 </template>
+<style scoped>
+.recipes{
+  display: flex;
+  column-gap: 2rem;
+}
+</style>

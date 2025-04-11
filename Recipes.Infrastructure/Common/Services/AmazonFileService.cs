@@ -8,7 +8,7 @@ namespace Recipes.Infrastructure.Common.Services;
 
 public class AmazonFileService(IAmazonS3 s3, IOptionsSnapshot<S3Options> options) : IFileService
 {
-    public async Task<Stream> GetFileContentsAsync(string fileName, CancellationToken token = default)
+    public async Task<Stream?> GetFileContentsAsync(string fileName, CancellationToken token = default)
     {
         var obj = await s3.GetObjectAsync(new GetObjectRequest
         {
@@ -16,7 +16,7 @@ public class AmazonFileService(IAmazonS3 s3, IOptionsSnapshot<S3Options> options
             Key = fileName
         }, token).ConfigureAwait(ConfigureAwaitOptions.None);
 
-        return obj.ResponseStream;
+        return obj?.ResponseStream;
     }
 
     public async Task SaveFileContentsAsync(string fileName, Stream stream, CancellationToken token = default)

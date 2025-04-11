@@ -14,7 +14,8 @@ public class RecipeEditDto
 
     public ICollection<RecipeType> Types { get; set; } = [];
 
-    public DateTimeOffset UpdatedAt { get; set; }
-    
+
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+
     public ICollection<IngredientEditDto> Ingredients { get; set; } = [];
 }

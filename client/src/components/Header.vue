@@ -7,6 +7,7 @@ import {
   MdLogin,
   MdLogout,
   MdAdminPanelSettings,
+  MdAdd
 } from "vue-icons-plus/md";
 import { serverUrl } from "../utils/envVars";
 
@@ -55,6 +56,17 @@ router.afterEach(() => {
               }`"
             >
               Panel admina <MdAdminPanelSettings />
+            </p>
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/add">
+            <p
+              :class="`${'app-header-link'}${
+                currentRoute === 'add' ? ' active' : ''
+              }`"
+            >
+              Dodaj przepis <MdAdd />
             </p>
           </RouterLink>
         </li>

@@ -1,5 +1,7 @@
+using System.Text.Json;
 using AspNetCore.Scalar;
 using Hangfire;
+using Recipes.Api.Filters;
 using Recipes.Application;
 using Recipes.Infrastructure;
 using Recipes.Infrastructure.Common.Identity;
@@ -28,7 +30,13 @@ builder.Services.AddApplicationDependencies()
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+    {
+        opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
+builder.Services.AddScoped<GroundUserInfoFilter>();
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
