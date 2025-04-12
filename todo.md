@@ -1,3 +1,4 @@
+0. Modify backend for modern tools (Directory.build.props, husky, Directory.packages.props)
 1. Add AI component
 2. Finish UI
 3. Improve validation
