@@ -20,7 +20,12 @@ public class RecipeCreateValidatorTests(RecipeCreateValidator validator) : Recip
            Description = desc,
            Types = recipes,
            Image = new FormFile(Stream.Null, 0, 0, image, ""),
-           Ingredients = []
+           Ingredients = [new()
+           {
+               Description = "",
+               RecipeId = Guid.NewGuid(),
+               Order = 1
+           }]
         };
 
         var res = validator.Validate(new CreateRecipeCommand(dto));

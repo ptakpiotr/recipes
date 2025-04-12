@@ -17,7 +17,13 @@ public class RecipeEditValidatorTests(RecipeEditValidator validator) : RecipeEdi
             Id = id,
             AuthorId = authorId,
             Types = recipes,
-            Ingredients = []
+            Ingredients = [new()
+            {
+                Description = "",
+                RecipeId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                Order = 1
+            }]
         };
 
         var res = validator.Validate(new UpdateRecipeCommand(dto, Guid.NewGuid()));
