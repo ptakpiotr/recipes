@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { IRatingCreateDto } from "../../Types";
+import type { IRatingCreateDto } from "../../Types";
 import StarsRating from "./StarsRating.vue";
 import Modal from "./Modal.vue";
 import axios from "axios";

@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: recipes-api
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: Email__Email
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Email__Email
+            - name: Email__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Email__Host
+            - name: Email__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Email__Port
+            - name: Email__Password
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Email__Password
+            - name: S3__Bucket
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: S3__Bucket
+            - name: S3__ConnStr
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: S3__ConnStr
+            - name: S3__AccessKeyId
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: S3__AccessKeyId
+            - name: S3__SecretAccessKey
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: S3__SecretAccessKey
+            - name: Auth__ClientId
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Auth__ClientId
+            - name: Auth__ClientSecret
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Auth__ClientSecret
+            - name: Auth__TokenEndpoint
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Auth__TokenEndpoint
+            - name: Auth__UserEndpoint
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Auth__UserEndpoint
+            - name: Auth__AuthorizationEndpoint
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Auth__AuthorizationEndpoint
+            - name: ConnectionStrings__App
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: ConnectionStrings__App
+            - name: ConnectionStrings__Hangfire
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: ConnectionStrings__Hangfire
+            - name: ConnectionStrings__Redis
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: ConnectionStrings__Redis
+          ports:
+            - containerPort: 80

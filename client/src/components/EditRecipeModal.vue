@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { IRecipeEditDto } from "../../Types";
+import type { IRecipeEditDto } from "../../Types";
 import Modal from "./Modal.vue";
 
 const props = defineProps<{
@@ -10,7 +10,7 @@ const props = defineProps<{
 const editedRecipe = ref<IRecipeEditDto>(props.recipe);
 </script>
 <template>
-  <Modal :isOpen="true">
+  <Modal :isOpen="true" title="Edytuj przepis">
     <div>
       {{ JSON.stringify(editedRecipe) }}
     </div>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { MdAdd } from "vue-icons-plus/md";
 import type { IGeneralRecipe } from "../../Types";
 import GeneralRecipe from "./GeneralRecipe.vue";
 

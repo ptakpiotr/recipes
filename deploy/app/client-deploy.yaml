@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          imagePullPolicy: IfNotPresent
+          image: recipes-client
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          env:
+            - name: VITE_SERVER_URL
+              value: http://api-clusterip
+          ports:
+            - containerPort: 80

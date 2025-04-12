@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { MdStar } from "vue-icons-plus/md";
-import { ref, computed, defineEmits } from "vue";
+import { ref, defineEmits } from "vue";
 
 const props = defineProps<{
   rating?: number;
@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:rating"]);
 
-const currentRating = ref(props.rating);
+const currentRating = ref(props.rating ?? 0);
 const hoverValue = ref(0);
 
 const setRating = (star: number) => {
@@ -23,7 +23,7 @@ const hoverRating = (star: number) => {
 };
 
 const resetRating = () => {
-  currentRating.value = props.rating;
+  currentRating.value = props.rating ?? 0;
 };
 </script>
 <template>
@@ -34,7 +34,7 @@ const resetRating = () => {
       :class="{
         'text-yellow-600': star <= currentRating,
         'text-gray-300': star > currentRating,
-        'hover:text-yellow-600': star == hoverRating && editable,
+        'hover:text-yellow-600': star === hoverValue && editable,
         'cursor-pointer': editable,
       }"
       size="24"

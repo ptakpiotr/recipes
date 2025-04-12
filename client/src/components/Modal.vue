@@ -18,12 +18,12 @@ const submit = () => {
 </script>
 <template>
   <div
-    v-if="isOpen"
+    v-if="props.isOpen"
     class="fixed inset-0 flex items-center justify-center z-50"
   >
     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-gray-800">{{ title }}</h2>
+        <h2 class="text-lg font-bold text-gray-800">{{ props.title }}</h2>
         <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
           &times;
         </button>

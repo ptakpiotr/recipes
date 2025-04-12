@@ -41,7 +41,7 @@ const recipeDetails = (recipeId: string) => {
           />
         </div>
       </div>
-      <p class="text-sm">{{ formatDate(props.updatedAt) }}</p>
+      <p class="text-sm">{{ formatDate(props.updatedAt?.toString()) }}</p>
       <div>
         <button
           class="cursor-pointer"

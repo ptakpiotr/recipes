@@ -1,0 +1,8 @@
+.husky
+.idea
+client
+deploy
+infra
+bin/
+obj/
+docker-compose.yaml

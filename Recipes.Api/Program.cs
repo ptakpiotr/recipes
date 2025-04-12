@@ -1,9 +1,11 @@
 using System.Text.Json;
 using AspNetCore.Scalar;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Filters;
 using Recipes.Application;
 using Recipes.Infrastructure;
+using Recipes.Infrastructure.Common.Data;
 using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
 using Recipes.Infrastructure.Recipes.Jobs;
@@ -81,6 +83,9 @@ app.Lifetime.ApplicationStarted.Register(() =>
     using var jobServiceScope = app.Services.CreateScope();
     var job = jobServiceScope.ServiceProvider.GetRequiredService<NewsletterRecurringJob>();
     var client = jobServiceScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+    
+    var dbContext = jobServiceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
 
     client.AddOrUpdate("newsletter-recurring-job", () => job.ExecuteAsync(CancellationToken.None),
         Cron.Weekly(DayOfWeek.Monday));

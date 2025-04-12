@@ -8,7 +8,7 @@ import { MdCreate, MdPlusOne } from "vue-icons-plus/md";
 import StarsRating from "../components/StarsRating.vue";
 import AddRatingModal from "../components/AddRatingModal.vue";
 import EditRecipeModal from "../components/EditRecipeModal.vue";
-import { IRecipe } from "../../Types";
+import type { IRecipe } from "../../Types";
 import { formatDate } from "../utils/formatters";
 
 const recipe = ref<IRecipe | null>(null);
@@ -81,7 +81,7 @@ const openEditModal = () => {
         </div>
         <div class="text-gray-500 text-sm">
           <p>Utworzono o: {{ formatDate(recipe.createdAt) }}</p>
-          <p>Zaktualizowano : {{ formatDate(recipe.updatedAt) }}</p>
+          <p>Zaktualizowano : {{ formatDate(recipe.updatedAt?.toString()) }}</p>
         </div>
       </div>
       <div class="m-4 bg-white rounded-lg shadow-lg p-6">

@@ -1,6 +1,7 @@
-<script lang="ts">
+<script setup lang="ts">
 import "leaflet/dist/leaflet.css";
 import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+
 </script>
 <template>
   <footer class="bg-green-300 p-4">
