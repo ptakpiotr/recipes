@@ -30,7 +30,7 @@ onMounted(async () => {
   </div>
 </template>
 <style scoped>
-.recipes{
+.recipes {
   display: flex;
   column-gap: 2rem;
 }

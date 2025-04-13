@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
+using MassTransit.Middleware;
 using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
 using Recipes.Application.Common.Services;
@@ -16,6 +17,7 @@ public class RecipeService(
     IRecipesRepository recipesRepository,
     IDistributedCache cache,
     IFileService fileService,
+    IEmbeddingsService embeddingsService,
     IMapper mapper)
     : IRecipeService
 {
@@ -37,7 +39,7 @@ public class RecipeService(
             }
 
             recipe.ImageUrl = $"/api/files/recipe_{recipe.Id}";
-            
+
             return new SuccessWithValue<RecipeReadDto>(recipe);
         }
 
@@ -57,7 +59,7 @@ public class RecipeService(
         var result = mapper.Map<RecipeReadDto>(recipeFromDb);
 
         result.ImageUrl = $"/api/files/recipe_{result.Id}";
-        
+
         return new SuccessWithValue<RecipeReadDto>(result);
     }
 
@@ -72,7 +74,7 @@ public class RecipeService(
         }
 
         var result = mapper.Map<RecipeReadDto>(recipe);
-        
+
         result.ImageUrl = $"/api/files/recipe_{result.Id}";
 
         return new SuccessWithValue<RecipeReadDto>(result);
@@ -104,7 +106,16 @@ public class RecipeService(
     {
         var recipeToCreate = mapper.Map<RecipeModel>(recipe);
 
-        var createdRecipe = await recipesRepository.CreateRecipeAsync(recipeToCreate, token)
+        var embedding = await embeddingsService.GetEmbeddingAsync(recipe.Description, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        //TODO: change after resiliency introduced
+        if (embedding is null)
+        {
+            return new Error(ErrorType.OperationFailed);
+        }
+
+        var createdRecipe = await recipesRepository.CreateRecipeAsync(recipeToCreate, embedding, token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
 
         await fileService.SaveFileContentsAsync($"recipe_{createdRecipe?.Id}", recipe.Image.OpenReadStream(), token)
@@ -113,7 +124,7 @@ public class RecipeService(
         await recipesRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         var result = mapper.Map<RecipeReadDto>(createdRecipe);
-
+        
         return new SuccessWithValue<RecipeReadDto>(result);
     }
 
@@ -128,12 +139,26 @@ public class RecipeService(
             return new Error(ErrorType.Unauthorized);
         }
 
+        var embedding = await embeddingsService
+            .GetEmbeddingAsync(recipe.Description ?? recipeToCheck.Description, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        //TODO: change after resiliency introduced
+        if (embedding is null)
+        {
+            return new Error(ErrorType.OperationFailed);
+        }
+
         var updateOperation =
-            await recipesRepository.UpdateRecipeAsync(recipe, token)
+            await recipesRepository.UpdateRecipeAsync(recipe, embedding, token)
                 .ConfigureAwait(ConfigureAwaitOptions.None);
 
         await recipesRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
+        var cacheKey = $"{RecipeCacheKeyPrefix}_{recipeToCheck.Id}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
+        
         if (updateOperation == UpdateType.UpdateFailed)
         {
             return new Error(ErrorType.OperationFailed);

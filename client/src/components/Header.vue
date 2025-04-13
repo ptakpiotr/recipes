@@ -26,7 +26,7 @@ router.afterEach(() => {
       </div>
     </div>
     <nav>
-      <ul class="inline-block">
+      <ul class="flex items-center justify-center mt-2">
         <li>
           <RouterLink to="/"
             ><p

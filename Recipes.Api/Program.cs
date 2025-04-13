@@ -9,6 +9,7 @@ using Recipes.Infrastructure.Common.Data;
 using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
 using Recipes.Infrastructure.Recipes.Jobs;
+using Recipes.Infrastructure.Recipes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,16 +28,19 @@ builder.Services.AddOptions<EmailOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<ExternalOptions>()
+    .Bind(builder.Configuration.GetSection("External"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+
 builder.Services.AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers()
-    .AddJsonOptions(opts =>
-    {
-        opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    });
+    .AddJsonOptions(opts => { opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
 
 builder.Services.AddScoped<GroundUserInfoFilter>();
 
@@ -83,7 +87,7 @@ app.Lifetime.ApplicationStarted.Register(() =>
     using var jobServiceScope = app.Services.CreateScope();
     var job = jobServiceScope.ServiceProvider.GetRequiredService<NewsletterRecurringJob>();
     var client = jobServiceScope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-    
+
     var dbContext = jobServiceScope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
 

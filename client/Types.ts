@@ -57,3 +57,9 @@ export interface IRecipeEditDto extends Omit<IGeneralRecipe, "imageUrl"> {
   types: RecipeType[];
   ingredients: IIngredientReadDto[];
 }
+
+export interface IIngredientManageDto {
+  readonly recipeId: string;
+  description: string;
+  order: number;
+}

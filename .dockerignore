@@ -3,6 +3,7 @@
 client
 deploy
 infra
+ai
 bin/
 obj/
 docker-compose.yaml

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using Recipes.Infrastructure.Common.Data;
 namespace Recipes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250413120536_AddRecipesVectors")]
+    partial class AddRecipesVectors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,18 +175,16 @@ namespace Recipes.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Recipe")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid");
 
                     b.Property<Vector>("Vector")
                         .IsRequired()
-                        .HasColumnType("vector(1024)");
+                        .HasColumnType("vector(512)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("RecipesVectors");
                 });
@@ -219,6 +220,17 @@ namespace Recipes.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Recipes.Infrastructure.Recipes.DbEntities.RecipeVectors", b =>
+                {
+                    b.HasOne("Recipes.Domain.Recipes.Models.RecipeModel", "Recipe")
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Recipe");
                 });
 
             modelBuilder.Entity("Recipes.Domain.Recipes.Models.RecipeModel", b =>

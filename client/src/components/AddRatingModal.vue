@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import type { IRatingCreateDto } from "../../Types";
 import StarsRating from "./StarsRating.vue";
 import Modal from "./Modal.vue";
 import axios from "axios";
+import router from "../router";
 
 const props = defineProps<Pick<IRatingCreateDto, "recipeId">>();
 const isOpen = ref<boolean>(true);
+
+const route = useRouter();
 
 const rating = ref<IRatingCreateDto>({
   rating: 0,
@@ -22,12 +26,14 @@ const closeModal = () => {
 };
 
 const submitRating = async () => {
-  const res = await axios.post("/api/ratings", {
+  await axios.post("/api/ratings", {
     rating: rating.value.rating,
     recipeId: rating.value.recipeId,
   });
 
-  console.log(res);
+  closeModal();
+
+  router.go(0);
 };
 </script>
 <template>

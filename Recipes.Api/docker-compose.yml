@@ -10,7 +10,7 @@ services:
       MINIO_ROOT_PASSWORD: password123
     command: server /data --console-address ":9001"
   postgres:
-    image: postgres:14
+    image: pgvector/pgvector:pg14
     ports:
       - "5432:5432"
     environment:

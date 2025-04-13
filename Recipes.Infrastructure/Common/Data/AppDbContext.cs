@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Recipes.Domain.Recipes.Models;
 using Recipes.Domain.Users.Models;
+using Recipes.Infrastructure.Recipes.DbEntities;
 
 namespace Recipes.Infrastructure.Common.Data;
 
@@ -16,10 +17,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<RecipeModel> Recipes => Set<RecipeModel>();
     
+    public DbSet<RecipeVectors> RecipesVectors => Set<RecipeVectors>();
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasPostgresExtension("vector");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         modelBuilder.Entity<RoleModel>().ToTable("Roles", "roles");

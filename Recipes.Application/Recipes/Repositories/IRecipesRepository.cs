@@ -1,4 +1,5 @@
 ﻿using Recipes.Application.Recipes.DTO;
+using Recipes.Application.Recipes.Models;
 using Recipes.Domain.Common.Enums;
 using Recipes.Domain.Recipes.Models;
 
@@ -12,9 +13,9 @@ public interface IRecipesRepository
 
     Task<IList<RecipeModel>> GetRecipesAsync(CancellationToken token);
 
-    Task<RecipeModel?> CreateRecipeAsync(RecipeModel recipe, CancellationToken token);
+    Task<RecipeModel?> CreateRecipeAsync(RecipeModel recipe, EmbeddingModel embedding, CancellationToken token);
 
-    Task<UpdateType> UpdateRecipeAsync(RecipeEditDto recipe, CancellationToken token);
+    Task<UpdateType> UpdateRecipeAsync(RecipeEditDto recipe, EmbeddingModel embedding, CancellationToken token);
 
     Task<DeleteType> DeleteRecipeAsync(RecipeDeleteDto recipe, CancellationToken token);
 

@@ -28,7 +28,7 @@ const recipeDetails = (recipeId: string) => {
     <div class="bg-green p-6 text-green-950">
       <h1 class="text-2xl font-bold">{{ props.title }}</h1>
       <div class="general-recipe-content">
-        <p v-if="isHover" class="text-lg">
+        <p v-if="isHover" class="text-lg my-4">
           <VueMarkdown
             :source="DOMPurify.sanitize(props.description.substring(0, 150))"
           />...
@@ -44,7 +44,7 @@ const recipeDetails = (recipeId: string) => {
       <p class="text-sm">{{ formatDate(props.updatedAt?.toString()) }}</p>
       <div>
         <button
-          class="cursor-pointer"
+          class="bg-cyan-500 p-2 mt-2 rounded-xl text-white cursor-pointer hover:bg-cyan-700"
           @click="
             () => {
               recipeDetails(props.id);
@@ -60,5 +60,6 @@ const recipeDetails = (recipeId: string) => {
 <style scoped>
 .general-recipe-content {
   max-width: 250px;
+  height: 200px;
 }
 </style>

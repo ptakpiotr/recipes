@@ -6,6 +6,7 @@ import DOMPurify from "dompurify";
 import VueMarkdown from "vue-markdown-render";
 import { MdCreate, MdPlusOne } from "vue-icons-plus/md";
 import StarsRating from "../components/StarsRating.vue";
+import RecipeSentiment from "../components/RecipeSentiment.vue";
 import AddRatingModal from "../components/AddRatingModal.vue";
 import EditRecipeModal from "../components/EditRecipeModal.vue";
 import type { IRecipe } from "../../Types";
@@ -52,12 +53,15 @@ const openEditModal = () => {
       <div class="m-4 bg-white rounded-lg shadow-lg p-6">
         <div class="flex mb-3">
           <h1 class="text-xl font-semibold mb-2 flex-1">Przepis</h1>
-          <button
-            class="bg-fuchsia-500 p-2 rounded-xl text-white cursor-pointer hover:bg-fuchsia-700"
-            @click="openEditModal"
-          >
-            <MdCreate />
-          </button>
+          <div class="flex gap-2">
+            <RecipeSentiment :description="recipe.description" />
+            <button
+              class="bg-fuchsia-500 p-2 rounded-xl text-white cursor-pointer hover:bg-fuchsia-700"
+              @click="openEditModal"
+            >
+              <MdCreate />
+            </button>
+          </div>
         </div>
         <div v-if="recipe.imageUrl" class="mb-4">
           <img
@@ -94,8 +98,8 @@ const openEditModal = () => {
             <MdPlusOne />
           </button>
         </div>
-        <div v-for="r in recipe.ratings" :key="r.id">
-          <p>{{ r.userId }}</p>
+        <div class="p-2 m-2" v-for="r in recipe.ratings" :key="r.id">
+          <p>User: {{ r.userId }}</p>
           <StarsRating :rating="r.rating" :editable="false" />
         </div>
       </div>

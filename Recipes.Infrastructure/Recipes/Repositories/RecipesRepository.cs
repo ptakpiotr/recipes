@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using MassTransit.Initializers;
+using MassTransit.Middleware;
 using Microsoft.EntityFrameworkCore;
+using Pgvector;
 using Recipes.Application.Recipes.DTO;
+using Recipes.Application.Recipes.Models;
 using Recipes.Application.Recipes.Repositories;
 using Recipes.Domain.Common.Enums;
 using Recipes.Domain.Recipes.Models;
@@ -12,7 +16,21 @@ public class RecipesRepository(AppDbContext ctx, IMapper mapper) : IRecipesRepos
 {
     public async Task<RecipeModel?> GetRecipeByIdAsync(Guid recipeId, CancellationToken token)
     {
-        return await ctx.Recipes.AsNoTracking().FirstOrDefaultAsync(recipe => recipe.Id == recipeId, token)
+        return await ctx.Recipes
+            .AsNoTracking()
+            .Select(x => new RecipeModel()
+            {
+                Ratings = x.Ratings,
+                Description = x.Description,
+                Id = x.Id,
+                Ingredients = x.Ingredients,
+                Title = x.Title,
+                Types = x.Types,
+                AuthorId = x.AuthorId,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt,
+            })
+            .FirstOrDefaultAsync(recipe => recipe.Id == recipeId, token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
     }
 
@@ -28,19 +46,31 @@ public class RecipesRepository(AppDbContext ctx, IMapper mapper) : IRecipesRepos
             .ConfigureAwait(ConfigureAwaitOptions.None);
     }
 
-    public async Task<RecipeModel?> CreateRecipeAsync(RecipeModel recipe, CancellationToken token)
+    public async Task<RecipeModel?> CreateRecipeAsync(RecipeModel recipe, EmbeddingModel embedding,
+        CancellationToken token)
     {
         await ctx.Recipes.AddAsync(recipe, token).ConfigureAwait(false);
+        await ctx.RecipesVectors.AddAsync(new()
+        {
+            RecipeId = recipe.Id,
+            Recipe = recipe.Description,
+            Vector = new Vector(embedding.Embedding)
+        }, token).ConfigureAwait(false);
 
         return recipe;
     }
 
-    public async Task<UpdateType> UpdateRecipeAsync(RecipeEditDto recipe, CancellationToken token)
+    public async Task<UpdateType> UpdateRecipeAsync(RecipeEditDto recipe, EmbeddingModel embedding,
+        CancellationToken token)
     {
         var recipeForModification =
             await ctx.Recipes.FirstOrDefaultAsync(u => u.Id == recipe.Id, token).ConfigureAwait(false);
 
-        if (recipeForModification is null)
+        var recipeVectorForModification = await ctx.RecipesVectors
+            .FirstOrDefaultAsync(u => u.RecipeId == recipe.Id, token)
+            .ConfigureAwait(false);
+
+        if (recipeForModification is null || recipeVectorForModification is null)
         {
             return UpdateType.UpdateFailed;
         }
@@ -66,6 +96,9 @@ public class RecipesRepository(AppDbContext ctx, IMapper mapper) : IRecipesRepos
         {
             recipeForModification.Types = recipe.Types.ToList();
         }
+
+        recipeVectorForModification.Recipe = recipeForModification.Description;
+        recipeVectorForModification.Vector = new Vector(embedding.Embedding);
 
         return UpdateType.UpdateSuccessful;
     }

@@ -36,14 +36,16 @@ public static class DependencyInjection
         StorageOptions storageOptions = new();
         S3Options s3Options = new();
         EmailOptions emailOptions = new();
+        ExternalOptions externalOptions = new();
 
         configuration.GetSection("ConnectionStrings").Bind(storageOptions);
         configuration.GetSection("S3").Bind(s3Options);
         configuration.GetSection("Email").Bind(emailOptions);
+        configuration.GetSection("External").Bind(externalOptions);
 
         services.AddIdentityConfiguration(configuration);
 
-        services.AddDbContext<AppDbContext>(opts => { opts.UseNpgsql(storageOptions.App); });
+        services.AddDbContext<AppDbContext>(opts => { opts.UseNpgsql(storageOptions.App, o => o.UseVector()); });
 
         services.AddStackExchangeRedisCache(opts => { opts.Configuration = storageOptions.Redis; });
 
@@ -53,12 +55,13 @@ public static class DependencyInjection
             .AddSmtpSender(emailOptions.Host, emailOptions.Port,
                 emailOptions.Email, emailOptions.Password);
 
-        services.AddSingleton<IAmazonS3, AmazonS3Client>((_) => new AmazonS3Client(s3Options.AccessKeyId,s3Options.SecretAccessKey, new AmazonS3Config()
-        {
-            RegionEndpoint = RegionEndpoint.USEast1,
-            ServiceURL = s3Options.ConnStr,
-            ForcePathStyle = true
-        }));
+        services.AddSingleton<IAmazonS3, AmazonS3Client>((_) => new AmazonS3Client(s3Options.AccessKeyId,
+            s3Options.SecretAccessKey, new AmazonS3Config()
+            {
+                RegionEndpoint = RegionEndpoint.USEast1,
+                ServiceURL = s3Options.ConnStr,
+                ForcePathStyle = true
+            }));
 
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
@@ -75,12 +78,19 @@ public static class DependencyInjection
         services.AddScoped<IIngredientsService, IngredientsService>();
         services.AddScoped<IRecipeService, RecipeService>();
 
+        services.AddScoped<IEmbeddingsService, EmbeddingsService>();
+
         services.AddScoped<NewsletterRecurringJob>();
 
         services.AddMassTransit(opts =>
         {
             opts.AddConsumersFromNamespaceContaining<SendNewsletterDataEvent>();
             opts.UsingInMemory((context, cfg) => { cfg.ConfigureEndpoints(context); });
+        });
+
+        services.AddHttpClient("ai-client",(client) =>
+        {
+            client.BaseAddress = new Uri(externalOptions.AiService);
         });
 
         return services;

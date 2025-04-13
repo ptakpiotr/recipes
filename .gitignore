@@ -406,3 +406,5 @@ FodyWeavers.xsd
 .terraform.*.info
 
 api-cm.yaml
+.env
+dist

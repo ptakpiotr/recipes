@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import IngredientsManage from "../components/IngredientsManage.vue";
+import { recipeTypes } from "../utils/constants";
 import { serverUrl } from "../utils/envVars";
 
-const recipeTypes = ["Sweet", "Dinner", "Breakfast", "Lunch", "Other"];
+const ins = [
+  { description: "23", order: 1, recipeId: "45" },
+  { description: "53", order: 2, recipeId: "123" },
+];
 </script>
 <template>
   <form
@@ -55,6 +60,7 @@ const recipeTypes = ["Sweet", "Dinner", "Breakfast", "Lunch", "Other"];
         Hold Ctrl (or Command on Mac) to select multiple types.
       </p>
     </div>
+    <IngredientsManage :ingredients="ins" />
     <button
       type="submit"
       class="bg-green-500 text-green font-bold p-2 border-gray-900 border-2 rounded-md hover:bg-green-200"

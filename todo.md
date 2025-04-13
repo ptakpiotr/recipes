@@ -1,8 +1,6 @@
-0. Modify backend for modern tools (Directory.build.props)
-1. Add AI component
-2. Finish UI
-3. Improve validation
-4. Improve user grounding
-5. Add missing endpoints
-6. Add PWA
-7. Polish UI and add tests
+1. Finish UI
+2. Improve validation
+3. Improve user grounding
+4. Add missing endpoints
+5. Add PWA
+6. Polish UI and add tests

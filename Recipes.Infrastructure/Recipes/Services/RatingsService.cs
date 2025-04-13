@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Repositories;
@@ -9,8 +10,10 @@ using Recipes.Domain.Recipes.Models;
 
 namespace Recipes.Infrastructure.Recipes.Services;
 
-public class RatingsService(IRatingsRepository ratingsRepository, IMapper mapper) : IRatingsService
+public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCache cache, IMapper mapper) : IRatingsService
 {
+    private const string RecipeCacheKeyPrefix = "Recipe";
+
     public async Task<OneOf<SuccessWithValue<IReadOnlyList<RatingReadDto>>, Error>> GetRatingsForRecipeAsync(
         Guid recipeId, CancellationToken token)
     {
@@ -38,6 +41,10 @@ public class RatingsService(IRatingsRepository ratingsRepository, IMapper mapper
         await ratingsRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         var result = mapper.Map<RatingReadDto>(createdRating);
+        
+        var cacheKey = $"{RecipeCacheKeyPrefix}_{createdRating.RecipeId}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         return new SuccessWithValue<RatingReadDto>(result);
     }

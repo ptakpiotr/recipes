@@ -3,6 +3,7 @@ import { defineEmits } from "vue";
 
 const props = defineProps<{
   isOpen: boolean;
+  hideCancel?: boolean;
   title: string;
 }>();
 
@@ -36,6 +37,7 @@ const submit = () => {
       <div class="mt-6 flex justify-end space-x-2">
         <button
           class="px-4 py-2 bg-orange-300 text-white rounded-md hover:bg-orange-500"
+          v-if="!props.hideCancel"
           @click="closeModal"
         >
           Anuluj
