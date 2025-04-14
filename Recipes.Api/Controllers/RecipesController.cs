@@ -5,6 +5,7 @@ using Recipes.Api.Filters;
 using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
+using Recipes.Domain.Recipes.Enums;
 using Recipes.Infrastructure.Common.Identity;
 
 namespace Recipes.Api.Controllers;
@@ -14,9 +15,9 @@ namespace Recipes.Api.Controllers;
 public class RecipesController(ISender sender) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetRecipesAsync(CancellationToken token)
+    public async Task<IActionResult> GetRecipesAsync([FromQuery] RecipeType? filterType, CancellationToken token)
     {
-        GetAllRecipesQuery query = new();
+        GetAllRecipesQuery query = new(filterType);
 
         var res = await sender.Send(query, token);
 
@@ -96,7 +97,7 @@ public class RecipesController(ISender sender) : ControllerBase
         {
             return BadRequest();
         }
-        
+
         UpdateRecipeCommand cmd = new(dto, userId);
 
         var res = await sender.Send(cmd, token);

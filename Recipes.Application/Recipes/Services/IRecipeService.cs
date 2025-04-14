@@ -1,4 +1,5 @@
 ﻿using Recipes.Application.Recipes.DTO;
+using Recipes.Domain.Recipes.Enums;
 
 namespace Recipes.Application.Recipes.Services;
 
@@ -8,7 +9,7 @@ public interface IRecipeService
 
     Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> GetRandomRecipeAsync(CancellationToken token);
 
-    Task<OneOf<SuccessWithValue<IReadOnlyList<RecipeReadDto>>, Error>> GetAllRecipesAsync(CancellationToken token);
+    Task<OneOf<SuccessWithValue<IReadOnlyList<RecipeReadDto>>, Error>> GetAllRecipesAsync(RecipeType? recipeType, CancellationToken token);
 
     Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> CreateRecipeAsync(RecipeCreateDto recipe,
         CancellationToken token);

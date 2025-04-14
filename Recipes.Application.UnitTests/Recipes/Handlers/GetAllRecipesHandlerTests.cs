@@ -14,7 +14,7 @@ public class GetAllRecipesHandlerTests(RecipesServices services) : RecipesServic
     {
         GetAllRecipesHandler handler = new(services.SuccessRecipeService);
 
-        var param = new GetAllRecipesQuery();
+        var param = new GetAllRecipesQuery(null);
 
         var res = await handler.Handle(param, CancellationToken.None);
 
@@ -26,7 +26,7 @@ public class GetAllRecipesHandlerTests(RecipesServices services) : RecipesServic
     {
         GetAllRecipesHandler handler = new(services.FailureRecipeService);
 
-        var param = new GetAllRecipesQuery();
+        var param = new GetAllRecipesQuery(null);
 
         var res = await handler.Handle(param, CancellationToken.None);
 

@@ -13,6 +13,19 @@ namespace Recipes.Api.Controllers;
 [Authorize(Policy = IdentityConstants.AdminPolicy)]
 public class UsersController(ISender sender) : ControllerBase
 {
+    [HttpGet("basic")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetBasicUsers(CancellationToken token)
+    {
+        GetBasicUsersQuery query = new();
+
+        var res = await sender.Send(query, token);
+
+        var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        return actionRes;
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetUsers(CancellationToken token)
     {

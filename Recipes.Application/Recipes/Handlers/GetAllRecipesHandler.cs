@@ -10,6 +10,6 @@ public class GetAllRecipesHandler(IRecipeService service)
     public Task<OneOf<SuccessWithValue<IReadOnlyList<RecipeReadDto>>, Error>> Handle(GetAllRecipesQuery request,
         CancellationToken cancellationToken)
     {
-        return service.GetAllRecipesAsync(cancellationToken);
+        return service.GetAllRecipesAsync(request.RecipeType, cancellationToken);
     }
 }

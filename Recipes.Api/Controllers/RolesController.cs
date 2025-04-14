@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Recipes.Api.Filters;
 using Recipes.Application.Users.Commands;
 using Recipes.Application.Users.DTO;
 using Recipes.Application.Users.Queries;
@@ -10,10 +11,10 @@ namespace Recipes.Api.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-[Authorize(Policy = IdentityConstants.AdminPolicy)]
 public class RolesController(ISender sender) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Policy = IdentityConstants.AdminPolicy)]
     public async Task<IActionResult> GetRoles(CancellationToken token)
     {
         GetRolesQuery query = new();
@@ -26,6 +27,7 @@ public class RolesController(ISender sender) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize(Policy = IdentityConstants.AdminPolicy)]
     public async Task<IActionResult> GetRoleById([FromRoute] Guid id, CancellationToken token)
     {
         GetRoleByIdQuery query = new(id);
@@ -37,9 +39,12 @@ public class RolesController(ISender sender) : ControllerBase
         return actionRes;
     }
     
-    [HttpGet("/admin/{id:guid}")]
-    public async Task<IActionResult> IsUserAdmin([FromRoute] Guid id, CancellationToken token)
+    [HttpGet("admin")]
+    [Authorize]
+    [ServiceFilter<GroundUserInfoFilter>]
+    public async Task<IActionResult> IsUserAdmin(CancellationToken token)
     {
+        var id = Guid.Parse(HttpContext.Items["UserId"]?.ToString() ?? string.Empty);
         CheckIfAdminQuery query = new(id);
 
         var res = await sender.Send(query, token);
@@ -50,6 +55,7 @@ public class RolesController(ISender sender) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = IdentityConstants.AdminPolicy)]
     public async Task<IActionResult> CreateRole([FromBody] RoleCreateDto dto, CancellationToken token)
     {
         CreateRoleCommand cmd = new(dto);

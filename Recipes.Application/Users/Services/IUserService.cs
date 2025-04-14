@@ -13,6 +13,8 @@ public interface IUserService
     Task<OneOf<SuccessWithValue<bool>, Error>> CheckIfUserAdminAsync(Guid userId, CancellationToken token);
 
     Task<OneOf<SuccessWithValue<IReadOnlyList<UserReadDto>>, Error>> GetAllUsersAsync(CancellationToken token);
+    
+    Task<OneOf<SuccessWithValue<IReadOnlyList<UserBasicReadDto>>, Error>> GetBasicsUsersAsync(CancellationToken token);
 
     Task<OneOf<SuccessWithValue<UserReadDto>, Error>> CreateUserAsync(UserCreateDto user, CancellationToken token);
 

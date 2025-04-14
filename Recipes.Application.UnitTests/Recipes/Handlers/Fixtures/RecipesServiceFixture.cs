@@ -22,7 +22,7 @@ public class RecipesServices
         SuccessRecipeService.GetRandomRecipeAsync(Arg.Any<CancellationToken>())
             .Returns(new SuccessWithValue<RecipeReadDto>(new RecipeReadDto()));
 
-        SuccessRecipeService.GetAllRecipesAsync(Arg.Any<CancellationToken>())
+        SuccessRecipeService.GetAllRecipesAsync(null, Arg.Any<CancellationToken>())
             .Returns(new SuccessWithValue<IReadOnlyList<RecipeReadDto>>([new RecipeReadDto()]));
 
         SuccessRecipeService.CreateRecipeAsync(Arg.Any<RecipeCreateDto>(), Arg.Any<CancellationToken>())
@@ -44,7 +44,7 @@ public class RecipesServices
         FailureRecipeService.GetRandomRecipeAsync(Arg.Any<CancellationToken>())
             .Returns(new Error(ErrorType.OperationFailed, "Operation failed"));
 
-        FailureRecipeService.GetAllRecipesAsync(Arg.Any<CancellationToken>())
+        FailureRecipeService.GetAllRecipesAsync(null, Arg.Any<CancellationToken>())
             .Returns(new Error(ErrorType.OperationFailed, "Operation failed"));
 
         FailureRecipeService.CreateRecipeAsync(Arg.Any<RecipeCreateDto>(), Arg.Any<CancellationToken>())

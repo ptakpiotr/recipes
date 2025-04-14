@@ -113,6 +113,20 @@ public class UserService(IUsersRepository usersRepository, IDistributedCache cac
         return new SuccessWithValue<IReadOnlyList<UserReadDto>>(result.AsReadOnly().ToList());
     }
 
+    public async Task<OneOf<SuccessWithValue<IReadOnlyList<UserBasicReadDto>>, Error>> GetBasicsUsersAsync(CancellationToken token)
+    {
+        var users = await usersRepository.GetUsersAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (users.Count == 0)
+        {
+            return new Error(ErrorType.NotFound);
+        }
+
+        var result = mapper.Map<IList<UserBasicReadDto>>(users);
+
+        return new SuccessWithValue<IReadOnlyList<UserBasicReadDto>>(result.AsReadOnly().ToList());
+    }
+
     public async Task<OneOf<SuccessWithValue<UserReadDto>, Error>> CreateUserAsync(UserCreateDto user,
         CancellationToken token)
     {

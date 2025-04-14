@@ -4,8 +4,8 @@ import axios from "axios";
 import { aiUrl } from "../utils/envVars";
 import { MdLightbulb } from "vue-icons-plus/md";
 import Modal from "./Modal.vue";
-// import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
-// import "leaflet/dist/leaflet.css";
+
+import "leaflet/dist/leaflet.css";
 
 const isOpen = ref(false);
 const inspirationInput = ref("");
@@ -66,14 +66,5 @@ const findInspiration = async () => {
         <MdLightbulb />
       </button>
     </div>
-    <!-- <div style="height: 100px; width: 800px">
-      <LMap ref="map" :center="[47.41322, -1.219482]">
-        <LTileLayer
-          :url="`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`"
-          layer-type="base"
-          name="OpenStreetMap"
-        ></LTileLayer>
-      </LMap>
-    </div> -->
   </footer>
 </template>

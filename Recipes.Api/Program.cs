@@ -70,8 +70,6 @@ app.MapControllers();
 
 app.MapReverseProxy();
 
-app.MapGet("/", () => Results.LocalRedirect("/app"));
-
 app.MapGet("/logout", () => Results.SignOut(new()
 {
     RedirectUri = "/"

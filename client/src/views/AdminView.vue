@@ -38,8 +38,6 @@ const groupsColumns = [
 const usersRows = ref<IUser[]>([]);
 const groupsRows = ref<IRole[]>([]);
 
-// TODO: put admin check globally
-
 onMounted(async () => {
   const usersData = await axios.get<{ value: IUser[] }>("/api/users");
   const groupsData = await axios.get<{ value: IRole[] }>("/api/roles");

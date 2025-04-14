@@ -1,30 +1,47 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { RouterLink, useRouter } from "vue-router";
+import { computed, ref } from "vue";
+import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
   MdHome,
   MdPerson,
   MdLogin,
   MdLogout,
   MdAdminPanelSettings,
-  MdAdd
+  MdAdd,
 } from "vue-icons-plus/md";
 import { serverUrl } from "../utils/envVars";
+import { useUsersStore } from "../store/store";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const currentRoute = ref("");
+const store = useUsersStore();
+const { isAdmin } = storeToRefs(store);
+const route = useRoute();
 
 router.afterEach(() => {
   currentRoute.value = router.currentRoute.value.path.replace("/", "");
 });
+
+const navigateToHome = () => {
+  router.push("/");
+};
 </script>
 <template>
   <header class="flex bg-green-300 p-5">
     <div class="app-header-name">
-      <div class="logo">
+      <div class="logo cursor-pointer" @click="navigateToHome">
         <p class="logo-text">Przepisy</p>
       </div>
+      <span
+        v-if="route.query['filterType']"
+        @click="navigateToHome"
+        class="ml-4 text-sm bg-fuchsia-600 text-white rounded-full px-3 py-1 hover:bg-fuchsia-700 cursor-pointer"
+      >
+        {{ route.query["filterType"] }}
+      </span>
     </div>
+
     <nav>
       <ul class="flex items-center justify-center mt-2">
         <li>
@@ -48,7 +65,7 @@ router.afterEach(() => {
             </p>
           </RouterLink>
         </li>
-        <li>
+        <li v-if="isAdmin">
           <RouterLink to="/admin">
             <p
               :class="`${'app-header-link'}${

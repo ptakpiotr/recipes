@@ -1,29 +1,36 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import DOMPurify from "dompurify";
 import VueMarkdown from "vue-markdown-render";
-import { MdCreate, MdPlusOne } from "vue-icons-plus/md";
+import { MdCreate, MdPlusOne, MdRemove } from "vue-icons-plus/md";
 import StarsRating from "../components/StarsRating.vue";
 import RecipeSentiment from "../components/RecipeSentiment.vue";
 import AddRatingModal from "../components/AddRatingModal.vue";
 import EditRecipeModal from "../components/EditRecipeModal.vue";
-import type { IRecipe } from "../../Types";
+import RemoveRecipeModal from "../components/RemoveRecipeModal.vue";
+import type { IRecipe, RecipeType } from "../../Types";
 import { formatDate } from "../utils/formatters";
+import { storeToRefs } from "pinia";
+import { useUsersStore } from "../store/store";
 
 const recipe = ref<IRecipe | null>(null);
 const showRatingModal = ref<boolean>(false);
 const editModal = ref<boolean>(false);
+const removeModal = ref<boolean>(false);
 const route = useRoute();
+const router = useRouter();
+const store = useUsersStore();
+const { users } = storeToRefs(store);
 
 onMounted(async () => {
   const splitRoute = route.path.split("/");
 
   if (splitRoute.length === 3) {
-    const recipeRes = await axios.get<{ value: IRecipe }>(
-      `/api/recipes/${splitRoute[2]}`
-    );
+    const recipesUrl = `/api/recipes/${splitRoute[2]}`;
+
+    const recipeRes = await axios.get<{ value: IRecipe }>(recipesUrl);
 
     if (recipeRes.status === 200) {
       recipe.value = recipeRes.data.value;
@@ -34,15 +41,32 @@ onMounted(async () => {
 const openRatingModal = () => {
   showRatingModal.value = !showRatingModal.value;
   editModal.value = false;
+  removeModal.value = false;
 };
 
 const openEditModal = () => {
   editModal.value = !editModal.value;
   showRatingModal.value = false;
+  removeModal.value = false;
+};
+
+const openRemoveModal = () => {
+  removeModal.value = !removeModal.value;
+  editModal.value = false;
+  showRatingModal.value = false;
+};
+
+const openFilteredRecipesView = (type: RecipeType) => {
+  const recipeType = type.toString();
+
+  router.push(`/?filterType=${recipeType}`);
 };
 </script>
 <template>
   <div>
+    <Teleport v-if="removeModal && recipe" to="body">
+      <RemoveRecipeModal :recipeId="recipe.id" />
+    </Teleport>
     <Teleport v-if="showRatingModal && recipe" to="body">
       <AddRatingModal :recipeId="recipe.id" />
     </Teleport>
@@ -61,6 +85,12 @@ const openEditModal = () => {
             >
               <MdCreate />
             </button>
+            <button
+              class="bg-red-500 p-2 rounded-xl text-white cursor-pointer hover:bg-red-700"
+              @click="openRemoveModal"
+            >
+              <MdRemove />
+            </button>
           </div>
         </div>
         <div v-if="recipe.imageUrl" class="mb-4">
@@ -78,7 +108,8 @@ const openEditModal = () => {
           <span
             v-for="type in recipe.types"
             :key="type"
-            class="text-sm bg-fuchsia-600 text-white rounded-full px-3 py-1 hover:bg-fuchsia-700"
+            @click="() => openFilteredRecipesView(type)"
+            class="text-sm bg-fuchsia-600 text-white rounded-full px-3 py-1 hover:bg-fuchsia-700 cursor-pointer"
           >
             {{ type }}
           </span>
@@ -99,7 +130,16 @@ const openEditModal = () => {
           </button>
         </div>
         <div class="p-2 m-2" v-for="r in recipe.ratings" :key="r.id">
-          <p>User: {{ r.userId }}</p>
+          <div class="recipe-user">
+            <p>
+              Użytkownik: {{ users?.find((u) => u.id === r.userId)?.userName }}
+            </p>
+            <img
+              class="recipe-image"
+              :src="users?.find((u) => u.id === r.userId)?.userImageLink"
+              alt="Avatar użytkownika"
+            />
+          </div>
           <StarsRating :rating="r.rating" :editable="false" />
         </div>
       </div>
@@ -107,3 +147,13 @@ const openEditModal = () => {
     <div v-else></div>
   </div>
 </template>
+<style scoped>
+.recipe-user {
+  display: flex;
+  column-gap: 1rem;
+}
+.recipe-image {
+  width: 2rem;
+  height: 2rem;
+}
+</style>

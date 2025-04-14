@@ -1,15 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import type { IGeneralRecipe } from "../../Types";
 import GeneralRecipe from "./GeneralRecipe.vue";
+import { useRoute } from "vue-router";
 
 const recipes = ref<IGeneralRecipe[]>([]);
+const route = useRoute();
+const splitQuery = route.query;
 
 onMounted(async () => {
-  const recipesData = await axios.get<{ value: IGeneralRecipe[] }>(
-    "/api/recipes"
-  );
+  const recipeFilterQuery = splitQuery["filterType"];
+
+  const recipesUrl = `/api/recipes${
+    !!recipeFilterQuery ? `?filterType=${recipeFilterQuery}` : ""
+  }`;
+
+  const recipesData = await axios.get<{ value: IGeneralRecipe[] }>(recipesUrl);
 
   if (recipesData.status === 200) {
     recipes.value = recipesData.data.value;

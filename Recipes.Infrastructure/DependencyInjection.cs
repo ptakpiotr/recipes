@@ -9,6 +9,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Retry;
+using Polly.Timeout;
 using Recipes.Application.Common.Services;
 using Recipes.Application.Common.Validators;
 using Recipes.Application.Recipes.Events;
@@ -88,9 +91,18 @@ public static class DependencyInjection
             opts.UsingInMemory((context, cfg) => { cfg.ConfigureEndpoints(context); });
         });
 
-        services.AddHttpClient("ai-client",(client) =>
+        services.AddHttpClient("ai-client", (client) => { client.BaseAddress = new Uri(externalOptions.AiService); });
+
+        services.AddResiliencePipeline("retry-pipeline", builder =>
         {
-            client.BaseAddress = new Uri(externalOptions.AiService);
+            builder
+                .AddRetry(new RetryStrategyOptions()
+                {
+                    BackoffType = DelayBackoffType.Exponential,
+                    Delay = TimeSpan.FromSeconds(2),
+                    MaxRetryAttempts = 3
+                })
+                .AddTimeout(TimeSpan.FromSeconds(10));
         });
 
         return services;

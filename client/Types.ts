@@ -63,3 +63,22 @@ export interface IIngredientManageDto {
   description: string;
   order: number;
 }
+
+interface IUserBasicReadStandard {
+  id: string;
+  userName: string;
+  userImageLink: string;
+}
+
+export type UserBasicReadDto = Readonly<IUserBasicReadStandard>;
+
+export interface IRoleReadDto {
+  readonly id: string;
+  readonly name: string;
+  readonly role: RoleType;
+}
+
+export enum RoleType {
+  User,
+  Admin,
+}

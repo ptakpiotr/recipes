@@ -49,7 +49,7 @@ const addIngredient = () => {
         <input
           type="text"
           id="ingredient"
-          class="w-full p-2 rounded-md text-black border-gray-900 border-2"
+          class="w-full p-2 bg-gray-50 rounded-sm text-black border-gray-900 border-1"
           v-model="ingredient"
         />
         <button
@@ -63,7 +63,7 @@ const addIngredient = () => {
     <div
       v-for="(ingredient, index) in ingredients"
       :key="index"
-      class="flex items-center justify-between bg-gray-50 rounded-xl p-4 mb-2 shadow"
+      class="flex items-center justify-between bg-gray-50 rounded-sm p-4 mb-2 border-1 shadow"
     >
       <span class="text-lg font-medium">{{ ingredient.description }}</span>
       <div class="flex space-x-2">

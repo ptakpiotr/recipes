@@ -3,12 +3,15 @@ using AutoMapper;
 using MassTransit.Middleware;
 using Microsoft.Extensions.Caching.Distributed;
 using OneOf;
+using Polly;
+using Polly.Registry;
 using Recipes.Application.Common.Services;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Repositories;
 using Recipes.Application.Recipes.Services;
 using Recipes.Domain.Common.Enums;
 using Recipes.Domain.Common.Results;
+using Recipes.Domain.Recipes.Enums;
 using Recipes.Domain.Recipes.Models;
 
 namespace Recipes.Infrastructure.Recipes.Services;
@@ -81,10 +84,16 @@ public class RecipeService(
     }
 
     public async Task<OneOf<SuccessWithValue<IReadOnlyList<RecipeReadDto>>, Error>> GetAllRecipesAsync(
+        RecipeType? recipeType,
         CancellationToken token)
     {
         var recipesFromDb = await recipesRepository.GetRecipesAsync(token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (recipeType is not null)
+        {
+            recipesFromDb = recipesFromDb.Where(r => r.Types.Any(r => r == recipeType)).ToList();
+        }
 
         if (recipesFromDb.Count == 0)
         {
@@ -109,7 +118,6 @@ public class RecipeService(
         var embedding = await embeddingsService.GetEmbeddingAsync(recipe.Description, token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
 
-        //TODO: change after resiliency introduced
         if (embedding is null)
         {
             return new Error(ErrorType.OperationFailed);
@@ -124,7 +132,7 @@ public class RecipeService(
         await recipesRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         var result = mapper.Map<RecipeReadDto>(createdRecipe);
-        
+
         return new SuccessWithValue<RecipeReadDto>(result);
     }
 
@@ -143,7 +151,6 @@ public class RecipeService(
             .GetEmbeddingAsync(recipe.Description ?? recipeToCheck.Description, token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
 
-        //TODO: change after resiliency introduced
         if (embedding is null)
         {
             return new Error(ErrorType.OperationFailed);
@@ -158,7 +165,7 @@ public class RecipeService(
         var cacheKey = $"{RecipeCacheKeyPrefix}_{recipeToCheck.Id}";
 
         await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
-        
+
         if (updateOperation == UpdateType.UpdateFailed)
         {
             return new Error(ErrorType.OperationFailed);
