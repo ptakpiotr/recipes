@@ -14,6 +14,8 @@ import type { IRecipe, RecipeType } from "../../Types";
 import { formatDate } from "../utils/formatters";
 import { storeToRefs } from "pinia";
 import { useUsersStore } from "../store/store";
+import { POSITION, useToast } from "vue-toastification";
+import { serverUrl } from "../utils/envVars";
 
 const recipe = ref<IRecipe | null>(null);
 const showRatingModal = ref<boolean>(false);
@@ -21,6 +23,7 @@ const editModal = ref<boolean>(false);
 const removeModal = ref<boolean>(false);
 const route = useRoute();
 const router = useRouter();
+const toast = useToast();
 const store = useUsersStore();
 const { users } = storeToRefs(store);
 
@@ -54,6 +57,21 @@ const openRemoveModal = () => {
   removeModal.value = !removeModal.value;
   editModal.value = false;
   showRatingModal.value = false;
+};
+
+const removeRating = async (ratingId: string) => {
+  try {
+    const ratingsUrl = `${serverUrl}/api/ratings/${ratingId}`;
+
+    await axios.delete(ratingsUrl);
+    toast.success("Usunięto opinie", {
+      position: POSITION.BOTTOM_RIGHT,
+    });
+  } catch (err) {
+    toast.error("Blad przy usuwaniu opinii", {
+      position: POSITION.BOTTOM_RIGHT,
+    });
+  }
 };
 
 const openFilteredRecipesView = (type: RecipeType) => {
@@ -139,6 +157,12 @@ const openFilteredRecipesView = (type: RecipeType) => {
               :src="users?.find((u) => u.id === r.userId)?.userImageLink"
               alt="Avatar użytkownika"
             />
+            <button
+              @click="() => removeRating(r.id)"
+              class="bg-red-500 p-1 rounded-xl text-white cursor-pointer hover:bg-red-700"
+            >
+              <MdRemove />
+            </button>
           </div>
           <StarsRating :rating="r.rating" :editable="false" />
         </div>

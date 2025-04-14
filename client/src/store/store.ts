@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { UserReadDto } from "../../Types";
+import type { UserBasicReadDto } from "../../Types";
 
 export const useUsersStore = defineStore("users", () => {
-  const users = ref<UserReadDto[] | null>([]);
+  const users = ref<UserBasicReadDto[] | null>([]);
   const isAdmin = ref<boolean>(false);
 
-  function setUsers(newUsers: UserReadDto[]) {
+  function setUsers(newUsers: UserBasicReadDto[]) {
     users.value = newUsers;
   }
 

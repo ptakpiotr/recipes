@@ -10,7 +10,8 @@ using Recipes.Domain.Recipes.Models;
 
 namespace Recipes.Infrastructure.Recipes.Services;
 
-public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCache cache, IMapper mapper) : IRatingsService
+public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCache cache, IMapper mapper)
+    : IRatingsService
 {
     private const string RecipeCacheKeyPrefix = "Recipe";
 
@@ -41,11 +42,36 @@ public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCa
         await ratingsRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         var result = mapper.Map<RatingReadDto>(createdRating);
-        
+
         var cacheKey = $"{RecipeCacheKeyPrefix}_{createdRating.RecipeId}";
 
         await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
 
         return new SuccessWithValue<RatingReadDto>(result);
+    }
+
+    public async Task<OneOf<Success, Error>> DeleteRecipeAsync(RatingDeleteDto rating, Guid userId,
+        CancellationToken token)
+    {
+        var recipeToCheck = await ratingsRepository.GetRatingsAsync(rating.Id, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (recipeToCheck?.UserId != userId)
+        {
+            return new Error(ErrorType.Unauthorized);
+        }
+
+        var deleteOperation =
+            await ratingsRepository.DeleteRatingAsync(rating, token)
+                .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        await ratingsRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (deleteOperation == DeleteType.DeleteFailed)
+        {
+            return new Error(ErrorType.OperationFailed);
+        }
+
+        return new Success();
     }
 }

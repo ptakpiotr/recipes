@@ -26,4 +26,30 @@ public class RatingsController(ISender sender) : ControllerBase
 
         return actionRes;
     }
+
+    [HttpDelete("{id:guid}")]
+    [ServiceFilter<GroundUserInfoFilter>]
+    public async Task<IActionResult> DeleteRating([FromRoute] Guid id, CancellationToken token)
+    {
+        var userId = Guid.Parse(HttpContext.Items["UserId"]?.ToString() ?? string.Empty);
+
+        DeleteRatingCommand cmd = new(new()
+        {
+            Id = id,
+        }, userId);
+
+        var res = await sender.Send(cmd, token);
+
+        var actionRes = res.Match<StatusCodeResult>(status =>
+        {
+            if (status.Status)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }, (_) => BadRequest());
+
+        return actionRes;
+    }
 }

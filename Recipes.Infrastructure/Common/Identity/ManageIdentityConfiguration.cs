@@ -76,8 +76,6 @@ public static class ManageIdentityConfiguration
                         appUser.ApplyRolesToExistingUser(existingUser.AsT0.Value);
                     }
 
-                    ctx.HttpContext.Items["user-id"] = existingUser.AsT0.Value.Id;
-
                     ctx.Response.Cookies.Append("user-login", userInfo["login"].ToString(), new()
                     {
                         HttpOnly = true,

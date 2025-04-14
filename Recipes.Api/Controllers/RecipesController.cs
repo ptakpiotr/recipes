@@ -55,6 +55,7 @@ public class RecipesController(ISender sender) : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = IdentityConstants.AuthzPolicy)]
+    [ServiceFilter<GroundUserInfoFilter>]
     public async Task<IActionResult> DeleteRecipe([FromRoute] Guid id, CancellationToken token)
     {
         RecipeDeleteDto dto = new()
@@ -62,7 +63,7 @@ public class RecipesController(ISender sender) : ControllerBase
             Id = id
         };
 
-        var parseResult = Guid.TryParse(HttpContext.Items["user-id"]?.ToString(), out var userId);
+        var parseResult = Guid.TryParse(HttpContext.Items["UserId"]?.ToString(), out var userId);
 
         if (!parseResult)
         {
@@ -91,7 +92,7 @@ public class RecipesController(ISender sender) : ControllerBase
     [ServiceFilter<GroundUserInfoFilter>]
     public async Task<IActionResult> UpdateRecipe([FromBody] RecipeEditDto dto, CancellationToken token)
     {
-        var parseResult = Guid.TryParse(HttpContext.Items["user-id"]?.ToString(), out var userId);
+        var parseResult = Guid.TryParse(HttpContext.Items["UserId"]?.ToString(), out var userId);
 
         if (!parseResult)
         {
