@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/refs/heads/master/src/schemas/json/web-manifest.json",
+  "name": "Recipes - aplikacja z przepisami",
+  "short_name": "Recipes",
+  "description": "Twoja aplikacja z przepisami",
+  "theme_color": "#7bf1a8",
+  "icons": [
+    {
+      "sizes": "512x512",
+      "src": "/logo.png",
+      "type": "image/png"
+    },
+    {
+      "sizes": "512x512",
+      "src": "/logo_maskable.png",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "sizes": "194x194",
+      "src": "/logo_194.png",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay"]
+}

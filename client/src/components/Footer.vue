@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 import { aiUrl } from "../utils/envVars";
-import { MdLightbulb } from "vue-icons-plus/md";
+import { MdLightbulb, MdDownload } from "vue-icons-plus/md";
 import Modal from "./Modal.vue";
 
 import "leaflet/dist/leaflet.css";
@@ -10,6 +10,15 @@ import "leaflet/dist/leaflet.css";
 const isOpen = ref(false);
 const inspirationInput = ref("");
 const inspirationResult = ref("");
+const prompt = ref(null);
+
+onMounted(() => {
+  window.addEventListener("beforeinstallprompt", (evt) => {
+    evt.preventDefault();
+
+    prompt.value = evt;
+  });
+});
 
 const openModal = () => {
   isOpen.value = true;
@@ -27,6 +36,15 @@ const findInspiration = async () => {
   });
 
   inspirationResult.value = resp.data;
+};
+
+const downloadTheApp = () => {
+  console.log(prompt.value);
+  if (prompt.value) {
+    prompt.value.prompt();
+
+    prompt.value = null;
+  }
 };
 </script>
 <template>
@@ -55,10 +73,16 @@ const findInspiration = async () => {
         {{ inspirationResult }}
       </p>
     </Modal>
-    <div class="flex">
+    <div class="flex gap-3">
       <p class="flex-1">
         &copy; Piotr Ptak {{ new Date().getUTCFullYear() }} - Przepisy
       </p>
+      <button
+        class="download-icon bg-indigo-500 p-2 rounded-xl text-white cursor-pointer hover:bg-indigo-700"
+        @click="downloadTheApp"
+      >
+        <MdDownload />
+      </button>
       <button
         class="bg-purple-500 p-2 rounded-xl text-white cursor-pointer hover:bg-purple-700"
         @click="openModal"
@@ -68,3 +92,14 @@ const findInspiration = async () => {
     </div>
   </footer>
 </template>
+<style scoped>
+.download-icon {
+  display: none;
+}
+
+@media (display-mode: browser) {
+  .download-icon {
+    display: block;
+  }
+}
+</style>

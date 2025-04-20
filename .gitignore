@@ -408,3 +408,5 @@ FodyWeavers.xsd
 api-cm.yaml
 .env
 dist
+
+pwa-practice/

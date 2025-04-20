@@ -35,10 +35,7 @@ onMounted(async () => {
       usersStore.setIsAdmin(isAdmin.data);
     }
   } catch (err) {
-    toast.error("Wystąpil blad w trakcie pobierania informacji", {
-      draggable: true,
-      position: POSITION.TOP_RIGHT,
-    });
+    //user is not an admin
   }
 });
 </script>
@@ -54,7 +51,13 @@ onMounted(async () => {
 </template>
 <style scoped>
 .content {
-  height: calc(100vh - 8rem);
+  height: calc(100vh - 9rem);
   overflow-y: auto;
+}
+
+@media (display-mode: minimal-ui) {
+  .content {
+    display: none;
+  }
 }
 </style>
