@@ -15,14 +15,14 @@ self.addEventListener("fetch", (event) => {
     caches
       .match(event.request)
       .then((response) => {
+        if ("setAppBadge" in navigator) {
+          //https://developer.mozilla.org/en-US/docs/Web/API/Badging_API
+          navigator.setAppBadge(1);
+        }
+
         return response || fetch(event.request);
       })
       .catch(async (_) => {
-        if ("setAppBadge" in navigator) {
-          //https://developer.mozilla.org/en-US/docs/Web/API/Badging_API
-          navigator.setAppBadge("flag");
-        }
-
         const cache = await caches.open(CACHE_KEY);
         const response = await cache.match(OFFLINE_PAGE);
 

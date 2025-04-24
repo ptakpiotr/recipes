@@ -7,6 +7,7 @@ using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
 using Recipes.Domain.Recipes.Enums;
 using Recipes.Infrastructure.Common.Identity;
+using WebPush;
 
 namespace Recipes.Api.Controllers;
 
@@ -49,6 +50,18 @@ public class RecipesController(ISender sender) : ControllerBase
         var res = await sender.Send(cmd, token);
 
         var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        //TODO: move to DI container
+        var webPushClient = new WebPushClient();
+
+        var pushSubscription = new PushSubscription(
+            "<User Endpoint>",
+            "<User Public Key>",
+            "<User Auth Secret>"
+        );
+
+        await webPushClient.SendNotificationAsync(pushSubscription, "Nowy wpis utworzony", [], token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
 
         return actionRes;
     }
