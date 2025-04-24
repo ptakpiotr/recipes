@@ -20,6 +20,27 @@ onMounted(async () => {
 
     if (users.status === 200) {
       usersStore.setUsers(users.data.value);
+      Notification.requestPermission().then(function (permission) {
+        if (permission === "granted") {
+          console.log("Notification permission granted.");
+        } else {
+          console.log("Notification permission denied.");
+        }
+      });
+
+      navigator.serviceWorker.ready.then(function (registration) {
+        registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: "myvapid-key",
+          })
+          .then(function (subscription) {
+            console.log("User is subscribed:", subscription);
+          })
+          .catch(function (error) {
+            console.error("Failed to subscribe the user:", error);
+          });
+      });
     }
   } catch (err) {
     toast.error("Wystąpil blad w trakcie pobierania informacji", {

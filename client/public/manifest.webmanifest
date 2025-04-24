@@ -22,6 +22,28 @@
       "type": "image/png"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "Strona domowa",
+      "url": "/",
+      "icons": [
+        {
+          "src": "logo.png",
+          "sizes": "194x194"
+        }
+      ]
+    },
+    {
+      "name": "O aplikacji",
+      "url": "/about",
+      "icons": [
+        {
+          "src": "logo.png",
+          "sizes": "194x194"
+        }
+      ]
+    }
+  ],
   "start_url": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay"]
