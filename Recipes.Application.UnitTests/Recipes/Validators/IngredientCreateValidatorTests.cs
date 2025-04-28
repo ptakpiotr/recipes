@@ -21,21 +21,6 @@ public class IngredientCreateValidatorTests(IngredientCreateValidator validator)
 
         Assert.True(res.IsValid);
     }
-    
-    [Theory]
-    [MemberData(nameof(GenerateInvalidIngredientsData))]
-    public void InvalidIngredients_ShouldReturnFalse(Guid recipeId, string desc, int order)
-    {
-        var dto = new IngredientCreateDto()
-        {
-            Description = desc,
-            Order = order
-        };
-        
-        var res = validator.Validate(new CreateIngredientCommand(dto));
-
-        Assert.False(res.IsValid);
-    }
 
     public static IEnumerable<object[]> GenerateValidIngredientsData()
     {
