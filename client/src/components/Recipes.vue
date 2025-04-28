@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import type { IGeneralRecipe } from "../../Types";
 import GeneralRecipe from "./GeneralRecipe.vue";
 import { useRoute } from "vue-router";
+import { syncRecipesData, getRecipesData } from "../utils/syncRecipesHelpers";
 
 const recipes = ref<IGeneralRecipe[]>([]);
 const route = useRoute();
@@ -16,10 +17,17 @@ onMounted(async () => {
     !!recipeFilterQuery ? `?filterType=${recipeFilterQuery}` : ""
   }`;
 
-  const recipesData = await axios.get<{ value: IGeneralRecipe[] }>(recipesUrl);
+  try {
+    const recipesData = await axios.get<{ value: IGeneralRecipe[] }>(
+      recipesUrl
+    );
 
-  if (recipesData.status === 200) {
-    recipes.value = recipesData.data.value;
+    if (recipesData.status === 200) {
+      recipes.value = recipesData.data.value;
+      await syncRecipesData(recipesData.data.value);
+    }
+  } catch (err) {
+    recipes.value = await getRecipesData();
   }
 });
 </script>
