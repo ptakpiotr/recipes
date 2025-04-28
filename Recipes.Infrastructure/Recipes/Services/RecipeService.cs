@@ -198,4 +198,17 @@ public class RecipeService(
 
         return new Success();
     }
+
+    public async Task<OneOf<Success, Error>> CheckOwnershipAsync(Guid userId, Guid recipeId, CancellationToken token)
+    {
+        var recipe = await recipesRepository.GetRecipeByIdAsync(recipeId, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (recipe?.AuthorId == userId)
+        {
+            return new Success();
+        }
+
+        return new Error(ErrorType.Unauthorized);
+    }
 }

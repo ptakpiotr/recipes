@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { MdArrowUpward, MdArrowDownward, MdAdd } from "vue-icons-plus/md";
-import type { IIngredientManageDto } from "../../Types";
+import { ref, watchEffect } from "vue";
+import {
+  MdArrowUpward,
+  MdArrowDownward,
+  MdAdd,
+  MdDelete,
+} from "vue-icons-plus/md";
+import type { CreateIngredientDto } from "../../Types";
 
 const props = defineProps<{
-  ingredients: IIngredientManageDto[];
+  ingredients: CreateIngredientDto[];
+  editable: boolean;
 }>();
 
 const ingredients = ref(props.ingredients);
 const ingredient = ref("");
+
+const emits = defineEmits(["manageIngredients"]);
+
+watchEffect(() => {
+  emits("manageIngredients", ingredients.value);
+});
 
 const swapOrder = (currentIndex: number, newIndex: number) => {
   const temp = ingredients.value[currentIndex];
@@ -35,15 +47,18 @@ const addIngredient = () => {
   ingredients.value.push({
     description: ingredient.value,
     order: ingredients.value.length,
-    recipeId: "",
   });
 
   ingredient.value = "";
 };
+
+const deleteIngredient = (deleteOrder: number) => {
+  ingredients.value = ingredients.value.filter((i) => i.order !== deleteOrder);
+};
 </script>
 <template>
   <div>
-    <div>
+    <div v-if="editable">
       <label for="ingredient" class="block font-bold">Dodaj skladnik:</label>
       <div class="flex gap-3 mb-4">
         <input
@@ -53,6 +68,7 @@ const addIngredient = () => {
           v-model="ingredient"
         />
         <button
+          type="button"
           class="bg-indigo-500 text-white px-2 py-1 rounded-xl"
           @click="addIngredient"
         >
@@ -66,7 +82,7 @@ const addIngredient = () => {
       class="flex items-center justify-between bg-gray-50 rounded-sm p-4 mb-2 border-1 shadow"
     >
       <span class="text-lg font-medium">{{ ingredient.description }}</span>
-      <div class="flex space-x-2">
+      <div v-if="editable" class="flex space-x-2">
         <button
           type="button"
           @click="moveUp(index)"
@@ -82,6 +98,13 @@ const addIngredient = () => {
           class="bg-green-500 text-white px-2 py-1 rounded-xl hover:bg-green-700 disabled:opacity-50"
         >
           <MdArrowDownward />
+        </button>
+        <button
+          type="button"
+          @click="deleteIngredient(ingredient.order)"
+          class="bg-red-500 text-white px-2 py-1 rounded-xl hover:bg-red-700 disabled:opacity-50"
+        >
+          <MdDelete />
         </button>
       </div>
     </div>

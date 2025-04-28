@@ -1,4 +1,13 @@
 1. Improve validation
-2. Add missing endpoints
-3. Add PWA
-4. Polish UI and add tests
+2. Add PWA
+3. Polish UI and add tests
+
+PWA:
+
+- Web Push (+)
+- Updates
+
+- Web Share (link do strony) (+)
+- Dexie (local first)
+- window.open (+)
+- File open (+)

@@ -15,7 +15,6 @@ public class CreateIngredientHandlerTests(IngredientsServices services) : Ingred
 
         var param = new CreateIngredientCommand(new()
         {
-            RecipeId = Guid.NewGuid(),
             Description = "Desc",
             Order = 1
         });
@@ -32,7 +31,6 @@ public class CreateIngredientHandlerTests(IngredientsServices services) : Ingred
 
         var param = new CreateIngredientCommand(new()
         {
-            RecipeId = Guid.NewGuid(),
             Description = "Desc",
             Order = 1
         });

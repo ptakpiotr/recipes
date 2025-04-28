@@ -23,7 +23,6 @@ public class RecipeCreateValidatorTests(RecipeCreateValidator validator) : Recip
            Ingredients = [new()
            {
                Description = "",
-               RecipeId = Guid.NewGuid(),
                Order = 1
            }]
         };

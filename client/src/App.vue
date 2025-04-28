@@ -6,7 +6,7 @@ import { onMounted } from "vue";
 import { useUsersStore } from "./store/store";
 import { POSITION, useToast } from "vue-toastification";
 import axios from "axios";
-import { serverUrl } from "./utils/envVars";
+import { serverUrl, vapidKey } from "./utils/envVars";
 import type { UserBasicReadDto } from "../Types";
 
 const usersStore = useUsersStore();
@@ -39,6 +39,20 @@ onMounted(async () => {
           })
           .catch(function (error) {
             console.error("Failed to subscribe the user:", error);
+          });
+      });
+
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidKey,
+          })
+          .then((subscription) => {
+            console.log("Push subscription:", subscription);
+          })
+          .catch((error) => {
+            console.error("Push subscription failed:", error);
           });
       });
     }

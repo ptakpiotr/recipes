@@ -13,7 +13,6 @@ public class IngredientCreateValidatorTests(IngredientCreateValidator validator)
     {
         var dto = new IngredientCreateDto()
         {
-            RecipeId = recipeId,
             Description = desc,
             Order = order
         };
@@ -29,7 +28,6 @@ public class IngredientCreateValidatorTests(IngredientCreateValidator validator)
     {
         var dto = new IngredientCreateDto()
         {
-            RecipeId = recipeId,
             Description = desc,
             Order = order
         };

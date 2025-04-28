@@ -62,7 +62,8 @@ const navigateToHome = () => {
         </button>
       </div>
     </div>
-    <div class="flex mt-2 p-5">
+    <div class="flex p-5">
+      <div class="dummy-header-space"></div>
       <div class="app-header-name">
         <span
           v-if="route.query['filterType']"
@@ -134,15 +135,24 @@ const navigateToHome = () => {
   </header>
 </template>
 <style scoped>
+.dummy-header-space {
+  flex: 1;
+  width: 100%;
+}
 .app-header {
   position: fixed;
   display: flex;
+  column-gap: 0.5rem;
   left: env(titlebar-area-x, 0);
   top: env(titlebar-area-y, 0);
   width: env(titlebar-area-width, 100%);
   height: env(titlebar-area-height, 2.5rem);
   -webkit-app-region: drag;
   app-region: drag;
+}
+
+.app-header-name {
+  margin-top: 0.5rem;
 }
 
 .app-header-search {
@@ -152,10 +162,6 @@ const navigateToHome = () => {
 
 .search-btn {
   margin-left: -2.5rem;
-}
-
-.app-header-name {
-  flex: 1;
 }
 
 .logo {

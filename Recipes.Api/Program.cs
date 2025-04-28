@@ -3,6 +3,7 @@ using AspNetCore.Scalar;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Filters;
+using Recipes.Api.Services;
 using Recipes.Application;
 using Recipes.Infrastructure;
 using Recipes.Infrastructure.Common.Data;
@@ -33,6 +34,10 @@ builder.Services.AddOptions<ExternalOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<VapidOptions>()
+    .Bind(builder.Configuration.GetSection("Vapid"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 builder.Services.AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
@@ -43,6 +48,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(opts => { opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; });
 
 builder.Services.AddScoped<GroundUserInfoFilter>();
+builder.Services.AddScoped<IWebPushService, WebPushService>();
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));

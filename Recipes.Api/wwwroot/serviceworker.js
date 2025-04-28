@@ -15,9 +15,10 @@ self.addEventListener("fetch", (event) => {
     caches
       .match(event.request)
       .then((response) => {
+        console.log(event.request, response);
         if ("setAppBadge" in navigator) {
           //https://developer.mozilla.org/en-US/docs/Web/API/Badging_API
-          navigator.setAppBadge(1);
+          navigator.setAppBadge(Math.floor(Math.random() * 100));
         }
 
         return response || fetch(event.request);
@@ -28,5 +29,13 @@ self.addEventListener("fetch", (event) => {
 
         return response;
       })
+  );
+});
+
+self.addEventListener("push", (event) => {
+  event.waitUntil(
+    self.registration.showNotification("Service worker", {
+      body: "This is my notification",
+    })
   );
 });

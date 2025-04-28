@@ -53,10 +53,10 @@ public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCa
     public async Task<OneOf<Success, Error>> DeleteRecipeAsync(RatingDeleteDto rating, Guid userId,
         CancellationToken token)
     {
-        var recipeToCheck = await ratingsRepository.GetRatingsAsync(rating.Id, token)
+        var ratingToCheck = await ratingsRepository.GetRatingsAsync(rating.Id, token)
             .ConfigureAwait(ConfigureAwaitOptions.None);
 
-        if (recipeToCheck?.UserId != userId)
+        if (ratingToCheck?.UserId != userId)
         {
             return new Error(ErrorType.Unauthorized);
         }
@@ -72,6 +72,52 @@ public class RatingsService(IRatingsRepository ratingsRepository, IDistributedCa
             return new Error(ErrorType.OperationFailed);
         }
 
+        var cacheKey = $"{RecipeCacheKeyPrefix}_{ratingToCheck.RecipeId}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
+
         return new Success();
+    }
+
+    public async Task<OneOf<Success, Error>> UpdateRatingAsync(RatingEditDto rating, Guid userId,
+        CancellationToken token)
+    {
+        var recipeToCheck = await ratingsRepository.GetRatingsAsync(rating.RatingId, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (recipeToCheck?.UserId != userId)
+        {
+            return new Error(ErrorType.Unauthorized);
+        }
+
+        var updateOperation =
+            await ratingsRepository.UpdateRatingAsync(rating, token)
+                .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        await ratingsRepository.SaveChangesAsync(token).ConfigureAwait(ConfigureAwaitOptions.None);
+
+        var cacheKey = $"{RecipeCacheKeyPrefix}_{recipeToCheck.Id}";
+
+        await cache.RemoveAsync(cacheKey, token).ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (updateOperation == UpdateType.UpdateFailed)
+        {
+            return new Error(ErrorType.OperationFailed);
+        }
+
+        return new Success();
+    }
+
+    public async Task<OneOf<Success, Error>> CheckOwnershipAsync(Guid userId, Guid ratingId, CancellationToken token)
+    {
+        var recipe = await ratingsRepository.GetRatingsAsync(ratingId, token)
+            .ConfigureAwait(ConfigureAwaitOptions.None);
+
+        if (recipe?.UserId == userId)
+        {
+            return new Success();
+        }
+
+        return new Error(ErrorType.Unauthorized);
     }
 }

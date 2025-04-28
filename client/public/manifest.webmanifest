@@ -46,5 +46,11 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay"]
+  "display_override": ["window-controls-overlay"],
+  "scope_extensions": [
+    {
+      "type": "origin",
+      "origin": "http://localhost:7151"
+    }
+  ]
 }

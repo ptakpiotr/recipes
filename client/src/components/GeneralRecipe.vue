@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import DOMPurify from "dompurify";
 import VueMarkdown from "vue-markdown-render";
-import { MdOpenInNew } from "vue-icons-plus/md";
+import { MdOpenInNew, MdOpenInBrowser } from "vue-icons-plus/md";
 import { formatDate } from "../utils/formatters";
 import type { IGeneralRecipe } from "../../Types";
 const props = defineProps<IGeneralRecipe>();
@@ -18,16 +18,20 @@ const handleHover = (hover: boolean) => {
 const recipeDetails = (recipeId: string) => {
   router.push(`/recipe/${recipeId}`);
 };
+
+const openInDifferentWindow = (recipeId: string) => {
+  window.open(`/recipe/${recipeId}`, "_blank");
+};
 </script>
 <template>
-  <div
-    class="bg-green-100 px-3 my-2 rounded-2xl w-[300px]"
-    @mouseenter="() => handleHover(true)"
-    @mouseleave="() => handleHover(false)"
-  >
+  <div class="bg-green-100 px-3 my-2 rounded-2xl w-[300px]">
     <div class="bg-green p-6 text-green-950">
-      <h1 class="text-2xl font-bold">{{ props.title }}</h1>
-      <div class="general-recipe-content">
+      <h1 class="text-xl font-bold">{{ props.title }}</h1>
+      <div
+        class="general-recipe-content"
+        @mouseenter="() => handleHover(true)"
+        @mouseleave="() => handleHover(false)"
+      >
         <p v-if="isHover" class="text-lg my-4">
           <VueMarkdown
             :source="DOMPurify.sanitize(props.description.substring(0, 150))"
@@ -37,12 +41,12 @@ const recipeDetails = (recipeId: string) => {
           <img
             :src="props.imageUrl"
             :alt="props.title"
-            class="rounded-md max-w-full h-auto"
+            class="rounded-md max-w-full max-h-[200px]"
           />
         </div>
       </div>
       <p class="text-sm">{{ formatDate(props.updatedAt?.toString()) }}</p>
-      <div>
+      <div class="flex gap-2">
         <button
           class="bg-cyan-500 p-2 mt-2 rounded-xl text-white cursor-pointer hover:bg-cyan-700"
           @click="
@@ -52,6 +56,16 @@ const recipeDetails = (recipeId: string) => {
           "
         >
           <MdOpenInNew />
+        </button>
+        <button
+          class="bg-indigo-500 p-2 mt-2 rounded-xl text-white cursor-pointer hover:bg-indigo-700"
+          @click="
+            () => {
+              openInDifferentWindow(props.id);
+            }
+          "
+        >
+          <MdOpenInBrowser />
         </button>
       </div>
     </div>

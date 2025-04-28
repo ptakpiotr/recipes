@@ -1,19 +1,24 @@
-﻿using MediatR;
+﻿using System.Text;
+using System.Text.Json;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Recipes.Api.Filters;
+using Recipes.Api.Services;
 using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
 using Recipes.Domain.Recipes.Enums;
 using Recipes.Infrastructure.Common.Identity;
+using Recipes.Infrastructure.Common.Options;
 using WebPush;
 
 namespace Recipes.Api.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class RecipesController(ISender sender) : ControllerBase
+public class RecipesController(ISender sender, IWebPushService webPushService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetRecipesAsync([FromQuery] RecipeType? filterType, CancellationToken token)
@@ -39,6 +44,22 @@ public class RecipesController(ISender sender) : ControllerBase
         return actionRes;
     }
 
+    [HttpGet("ownership/{recipeId:guid}")]
+    [Authorize]
+    [ServiceFilter<GroundUserInfoFilter>]
+    public async Task<IActionResult> CheckOwnership([FromRoute] Guid recipeId,
+        CancellationToken token)
+    {
+        var userId = Guid.Parse(HttpContext.Items["UserId"]?.ToString() ?? string.Empty);
+        CheckOwnershipQuery query = new(userId, recipeId);
+
+        var res = await sender.Send(query, token);
+
+        var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        return actionRes;
+    }
+
     [HttpPost]
     [Authorize]
     [ServiceFilter<GroundUserInfoFilter>]
@@ -51,17 +72,7 @@ public class RecipesController(ISender sender) : ControllerBase
 
         var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
 
-        //TODO: move to DI container
-        var webPushClient = new WebPushClient();
-
-        var pushSubscription = new PushSubscription(
-            "<User Endpoint>",
-            "<User Public Key>",
-            "<User Auth Secret>"
-        );
-
-        await webPushClient.SendNotificationAsync(pushSubscription, "Nowy wpis utworzony", [], token)
-            .ConfigureAwait(ConfigureAwaitOptions.None);
+        await webPushService.SendPushNotificationAsync("Nowy wpis zostal utworzony", token);
 
         return actionRes;
     }

@@ -76,12 +76,6 @@ public static class ManageIdentityConfiguration
                         appUser.ApplyRolesToExistingUser(existingUser.AsT0.Value);
                     }
 
-                    ctx.Response.Cookies.Append("user-login", userInfo["login"].ToString(), new()
-                    {
-                        HttpOnly = true,
-                        Secure = true
-                    });
-
                     ctx.Success();
                 };
             });

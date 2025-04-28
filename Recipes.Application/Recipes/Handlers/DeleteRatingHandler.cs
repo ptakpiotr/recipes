@@ -19,7 +19,7 @@ public class DeleteRatingHandler(IRatingsService ratingsService)
 
         if (rating.IsT0)
         {
-            return new CommandStatus();
+            return new CommandStatus(true);
         }
 
         return new Error(ErrorType.OperationFailed);

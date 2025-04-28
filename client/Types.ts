@@ -64,6 +64,8 @@ export interface IIngredientManageDto {
   order: number;
 }
 
+export type CreateIngredientDto = Omit<IIngredientManageDto, "recipeId">;
+
 interface IUserBasicReadStandard {
   id: string;
   userName: string;

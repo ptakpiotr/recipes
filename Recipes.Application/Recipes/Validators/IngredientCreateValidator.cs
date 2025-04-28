@@ -6,7 +6,6 @@ public class IngredientCreateValidator : AbstractValidator<CreateIngredientComma
 {
     public IngredientCreateValidator()
     {
-        RuleFor(x => x.Ingredient.RecipeId).NotEqual(Guid.Empty);
         RuleFor(x => x.Ingredient.Description).NotEmpty();
         RuleFor(x => x.Ingredient.Order).GreaterThan(0);
     }

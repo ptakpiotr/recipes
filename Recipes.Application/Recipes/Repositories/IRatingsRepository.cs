@@ -14,5 +14,8 @@ public interface IRatingsRepository
 
     Task<DeleteType> DeleteRatingAsync(RatingDeleteDto rating, CancellationToken token);
 
+    Task<UpdateType> UpdateRatingAsync(RatingEditDto rating,
+        CancellationToken token);
+
     Task SaveChangesAsync(CancellationToken token);
 }

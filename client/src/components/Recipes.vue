@@ -40,5 +40,7 @@ onMounted(async () => {
 .recipes {
   display: flex;
   column-gap: 2rem;
+  padding: 1rem;
+  flex-wrap: wrap;
 }
 </style>

@@ -43,6 +43,22 @@ public class RatingsRepository(AppDbContext ctx) : IRatingsRepository
         return DeleteType.DeleteSuccessful;
     }
 
+    public async Task<UpdateType> UpdateRatingAsync(RatingEditDto rating,
+        CancellationToken token)
+    {
+        var ratingForModification =
+            await ctx.Ratings.FirstOrDefaultAsync(u => u.Id == rating.RatingId, token).ConfigureAwait(false);
+
+        if (ratingForModification is null)
+        {
+            return UpdateType.UpdateFailed;
+        }
+        
+        ratingForModification.Rating = rating.Rating;
+
+        return UpdateType.UpdateSuccessful;
+    }
+
     public Task SaveChangesAsync(CancellationToken token)
     {
         return ctx.SaveChangesAsync(token);

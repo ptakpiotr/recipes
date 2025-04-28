@@ -1,45 +1,73 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import DOMPurify from "dompurify";
 import VueMarkdown from "vue-markdown-render";
-import { MdCreate, MdPlusOne, MdRemove } from "vue-icons-plus/md";
-import StarsRating from "../components/StarsRating.vue";
+import {
+  MdCreate,
+  MdPlusOne,
+  MdRemove,
+  MdShare,
+  MdImportExport,
+} from "vue-icons-plus/md";
 import RecipeSentiment from "../components/RecipeSentiment.vue";
 import AddRatingModal from "../components/AddRatingModal.vue";
 import EditRecipeModal from "../components/EditRecipeModal.vue";
 import RemoveRecipeModal from "../components/RemoveRecipeModal.vue";
+import IngredientsManage from "../components/IngredientsManage.vue";
+import RecipeUser from "../components/RecipeUser.vue";
 import type { IRecipe, RecipeType } from "../../Types";
 import { formatDate } from "../utils/formatters";
 import { storeToRefs } from "pinia";
 import { useUsersStore } from "../store/store";
-import { POSITION, useToast } from "vue-toastification";
-import { serverUrl } from "../utils/envVars";
 
 const recipe = ref<IRecipe | null>(null);
 const showRatingModal = ref<boolean>(false);
 const editModal = ref<boolean>(false);
 const removeModal = ref<boolean>(false);
+const isRecipeEditable = ref<boolean>(false);
 const route = useRoute();
 const router = useRouter();
-const toast = useToast();
 const store = useUsersStore();
 const { users } = storeToRefs(store);
+
+//@ts-ignore
+// let wakeLock: WakeLock = null;
 
 onMounted(async () => {
   const splitRoute = route.path.split("/");
 
   if (splitRoute.length === 3) {
     const recipesUrl = `/api/recipes/${splitRoute[2]}`;
+    const ownershipUrl = `/api/recipes/ownership/${splitRoute[2]}`;
 
     const recipeRes = await axios.get<{ value: IRecipe }>(recipesUrl);
 
     if (recipeRes.status === 200) {
       recipe.value = recipeRes.data.value;
+
+      // if ("wakeLock" in navigator) {
+      //   // @ts-ignore
+      //   wakeLock = navigator.wakeLock.request();
+      // }
+    }
+
+    try {
+      await axios.get(ownershipUrl);
+      isRecipeEditable.value = true;
+    } catch (err) {
+      isRecipeEditable.value = false;
     }
   }
 });
+
+// onUnmounted(() => {
+//   if (wakeLock) {
+//     //@ts-ignore
+//     wakeLock.release();
+//   }
+// });
 
 const openRatingModal = () => {
   showRatingModal.value = !showRatingModal.value;
@@ -59,19 +87,36 @@ const openRemoveModal = () => {
   showRatingModal.value = false;
 };
 
-const removeRating = async (ratingId: string) => {
-  try {
-    const ratingsUrl = `${serverUrl}/api/ratings/${ratingId}`;
+const shareRecipe = async () => {
+  const shareData = {
+    title: `Przepis: ${recipe.value?.title}`,
+    text: "Udostępnij dane o tym przepisie!",
+    url: route.path,
+  };
 
-    await axios.delete(ratingsUrl);
-    toast.success("Usunięto opinie", {
-      position: POSITION.BOTTOM_RIGHT,
-    });
-  } catch (err) {
-    toast.error("Blad przy usuwaniu opinii", {
-      position: POSITION.BOTTOM_RIGHT,
-    });
-  }
+  await navigator.share(shareData);
+};
+
+const exportRecipe = async () => {
+  // @ts-ignore
+  const file = await window.showSaveFilePicker({
+    types: [
+      {
+        description: "Text and json files",
+        accept: {
+          "text/plain": [".txt"],
+          "text/json": [".json"],
+          "application/json": [".json"],
+        },
+      },
+    ],
+  });
+
+  const stream = await file.createWritable();
+
+  await stream.write(JSON.stringify(recipe));
+
+  await stream.close();
 };
 
 const openFilteredRecipesView = (type: RecipeType) => {
@@ -96,8 +141,21 @@ const openFilteredRecipesView = (type: RecipeType) => {
         <div class="flex mb-3">
           <h1 class="text-xl font-semibold mb-2 flex-1">Przepis</h1>
           <div class="flex gap-2">
+            <button
+              class="bg-teal-500 p-2 rounded-xl text-white cursor-pointer hover:bg-teal-700"
+              @click="exportRecipe"
+            >
+              <MdImportExport />
+            </button>
+            <button
+              class="bg-indigo-500 p-2 rounded-xl text-white cursor-pointer hover:bg-indigo-700"
+              @click="shareRecipe"
+            >
+              <MdShare />
+            </button>
             <RecipeSentiment :description="recipe.description" />
             <button
+              v-if="isRecipeEditable"
               class="bg-fuchsia-500 p-2 rounded-xl text-white cursor-pointer hover:bg-fuchsia-700"
               @click="openEditModal"
             >
@@ -138,6 +196,15 @@ const openFilteredRecipesView = (type: RecipeType) => {
         </div>
       </div>
       <div class="m-4 bg-white rounded-lg shadow-lg p-6">
+        <div class="flex flex-col mb-3">
+          <h1 class="text-xl font-semibold mb-2 flex-1">Skladniki</h1>
+          <IngredientsManage
+            :ingredients="recipe.ingredients"
+            :editable="isRecipeEditable"
+          />
+        </div>
+      </div>
+      <div class="m-4 bg-white rounded-lg shadow-lg p-6">
         <div class="flex mb-3">
           <h1 class="text-xl font-semibold mb-2 flex-1">Opinie</h1>
           <button
@@ -148,36 +215,16 @@ const openFilteredRecipesView = (type: RecipeType) => {
           </button>
         </div>
         <div class="p-2 m-2" v-for="r in recipe.ratings" :key="r.id">
-          <div class="recipe-user">
-            <p>
-              Użytkownik: {{ users?.find((u) => u.id === r.userId)?.userName }}
-            </p>
-            <img
-              class="recipe-image"
-              :src="users?.find((u) => u.id === r.userId)?.userImageLink"
-              alt="Avatar użytkownika"
-            />
-            <button
-              @click="() => removeRating(r.id)"
-              class="bg-red-500 p-1 rounded-xl text-white cursor-pointer hover:bg-red-700"
-            >
-              <MdRemove />
-            </button>
-          </div>
-          <StarsRating :rating="r.rating" :editable="false" />
+          <RecipeUser
+            :rating="r"
+            :user="users?.find((u) => u.id === r.userId)"
+            :only-one-comment="
+              users?.filter((u) => u.id === r.userId).length === 1
+            "
+          />
         </div>
       </div>
     </div>
     <div v-else></div>
   </div>
 </template>
-<style scoped>
-.recipe-user {
-  display: flex;
-  column-gap: 1rem;
-}
-.recipe-image {
-  width: 2rem;
-  height: 2rem;
-}
-</style>
