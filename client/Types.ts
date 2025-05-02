@@ -17,6 +17,10 @@ export interface IGeneralRecipe {
   updatedAt: Date;
 }
 
+export interface IRecipeCreateDtoOffline extends IRecipeCreateDto {
+  isNew?: boolean;
+}
+
 export enum RecipeType {
   Sweet,
   Dinner,
@@ -78,6 +82,20 @@ export interface IRoleReadDto {
   readonly id: string;
   readonly name: string;
   readonly role: RoleType;
+}
+
+export interface IRecipeCreateDto{
+  title: string;
+  description: string;
+  image: number[];
+  imageName: string;
+  types: RecipeType[];
+  ingredients: IIngredientCreateDto[];
+}
+
+export interface IIngredientCreateDto{
+  description: string;
+  order: number;
 }
 
 export enum RoleType {

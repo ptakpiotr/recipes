@@ -136,6 +136,22 @@ public class RecipeService(
         return new SuccessWithValue<RecipeReadDto>(result);
     }
 
+    public async Task<OneOf<Success, Error>> MassCreateRecipesAsync(
+        IList<RecipeCreateDto> recipes, CancellationToken token)
+    {
+        List<Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>>> tasks = [];
+        //Potentially TODO - switch implementation to sth more performant
+        tasks.AddRange(recipes.Select(recipe => CreateRecipeAsync(recipe, token)));
+
+        var res = await Task.WhenAll(tasks).ConfigureAwait(ConfigureAwaitOptions.None);
+
+        return res.All(r => r.IsT0) switch
+        {
+            true => new Success(),
+            _ => new Error(ErrorType.OperationFailed)
+        };
+    }
+
     public async Task<OneOf<Success, Error>> UpdateRecipeAsync(RecipeEditDto recipe, Guid userId,
         CancellationToken token)
     {

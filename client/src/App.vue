@@ -2,15 +2,20 @@
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 import { RouterView } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useUsersStore } from "./store/store";
 import { POSITION, useToast } from "vue-toastification";
 import axios from "axios";
 import { serverUrl, vapidKey } from "./utils/envVars";
 import type { UserBasicReadDto } from "../Types";
+import { syncRecipesToBackend } from "./utils/syncRecipesHelpers";
 
 const usersStore = useUsersStore();
 const toast = useToast();
+
+const syncData = async () => {
+  await syncRecipesToBackend();
+};
 
 onMounted(async () => {
   try {
@@ -26,20 +31,6 @@ onMounted(async () => {
         } else {
           console.log("Notification permission denied.");
         }
-      });
-
-      navigator.serviceWorker.ready.then(function (registration) {
-        registration.pushManager
-          .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: "myvapid-key",
-          })
-          .then(function (subscription) {
-            console.log("User is subscribed:", subscription);
-          })
-          .catch(function (error) {
-            console.error("Failed to subscribe the user:", error);
-          });
       });
 
       navigator.serviceWorker.ready.then((registration) => {
@@ -64,6 +55,10 @@ onMounted(async () => {
   }
 
   try {
+    window.addEventListener("online", syncData);
+  } catch (err) {}
+
+  try {
     const isAdmin = await axios.get<boolean>(`${serverUrl}/api/roles/admin`);
 
     if (isAdmin.status === 200) {
@@ -72,6 +67,10 @@ onMounted(async () => {
   } catch (err) {
     //user is not an admin
   }
+});
+
+onUnmounted(() => {
+  window.removeEventListener("online", syncData);
 });
 </script>
 

@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <PackageReference Include="AspNetCore.Scalar" Version="1.1.8"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.15" />
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.14">
             <PrivateAssets>all</PrivateAssets>

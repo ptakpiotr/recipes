@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "@tailwindcss/vite": "^4.1.1",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "ag-grid-vue3": "^33.2.1",

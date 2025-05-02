@@ -10,7 +10,6 @@ using Recipes.Infrastructure.Common.Data;
 using Recipes.Infrastructure.Common.Identity;
 using Recipes.Infrastructure.Common.Options;
 using Recipes.Infrastructure.Recipes.Jobs;
-using Recipes.Infrastructure.Recipes.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -14,6 +14,9 @@ public interface IRecipeService
 
     Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>> CreateRecipeAsync(RecipeCreateDto recipe,
         CancellationToken token);
+    
+    Task<OneOf<Success, Error>> MassCreateRecipesAsync(IList<RecipeCreateDto> recipe,
+        CancellationToken token);
 
     Task<OneOf<Success, Error>> UpdateRecipeAsync(RecipeEditDto recipe, Guid userId, CancellationToken token);
 

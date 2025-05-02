@@ -4,7 +4,9 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Crypto.Macs;
 using Recipes.Api.Filters;
+using Recipes.Api.Models;
 using Recipes.Api.Services;
 using Recipes.Application.Recipes.Commands;
 using Recipes.Application.Recipes.DTO;
@@ -56,6 +58,38 @@ public class RecipesController(ISender sender, IWebPushService webPushService) :
         var res = await sender.Send(query, token);
 
         var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        return actionRes;
+    }
+
+    [HttpPost("mass-sync")]
+    [Authorize]
+    [ServiceFilter<GroundUserInfoFilter>]
+    public async Task<IActionResult> MassCreateRecipes([FromBody] RecipesMassPayload recipes,
+        CancellationToken token)
+    {
+        IList<RecipeCreateDto> recipeCreateDtos = [];
+        foreach (var r in recipes.Recipes)
+        {
+            using var fs = new MemoryStream(r.Image.Select(x => byte.Parse(x.ToString())).ToArray());
+            recipeCreateDtos.Add(new()
+            {
+                Image = new FormFile(fs!, 0, fs!.Length, r.ImageName, r.ImageName),
+                Description = r.Description,
+                Ingredients = r.Ingredients,
+                Types = r.Types,
+                Title = r.Title,
+                AuthorId = Guid.Parse(HttpContext.Items["UserId"]?.ToString() ?? string.Empty)
+            });
+        }
+
+        MassCreateRecipesCommand cmd = new(recipeCreateDtos);
+
+        var res = await sender.Send(cmd, token);
+
+        var actionRes = res.Match<ObjectResult>(Ok, BadRequest);
+
+        await webPushService.SendPushNotificationAsync("Nowe wpisy zostaly utworzone", token);
 
         return actionRes;
     }

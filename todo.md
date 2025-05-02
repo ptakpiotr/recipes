@@ -8,6 +8,6 @@ PWA:
 - Updates
 
 - Web Share (link do strony) (+)
-- Dexie (local first)
+- Dexie (local first) (+)
 - window.open (+)
 - File open (+)

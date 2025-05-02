@@ -7,6 +7,8 @@ import { serverUrl } from "../utils/envVars";
 import axios from "axios";
 import { POSITION, useToast } from "vue-toastification";
 import type { CreateIngredientDto } from "../../Types";
+import { addSingleRecipe } from "../utils/syncRecipesHelpers";
+import { convertRecipeToDbEntry } from "../utils/recipeDbConverter";
 
 const ingredients = ref<CreateIngredientDto[]>([]);
 const router = useRouter();
@@ -16,7 +18,7 @@ const manageIngredients = (newIngredients: CreateIngredientDto[]) => {
   ingredients.value = newIngredients;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   const formElement = document.querySelector("form") as HTMLFormElement;
   const formData = new FormData(formElement);
 
@@ -25,17 +27,23 @@ const handleSubmit = () => {
     formData.append(`ingredients[${index}][order]`, item.order.toString());
   });
 
-  axios
-    .post(formElement.action, formData)
-    .then((response) => {
-      router.push(`/recipe/${response.data.value.id}`);
-    })
-    .catch((_) => {
-      toast.error("Nie udalo się dodać nowego przepisu", {
-        draggable: true,
-        position: POSITION.TOP_RIGHT,
+  if (navigator.onLine === false) {
+    const entry = await convertRecipeToDbEntry(formData);
+    await addSingleRecipe(entry);
+    router.push("/");
+  } else {
+    axios
+      .post(formElement.action, formData)
+      .then((response) => {
+        router.push(`/recipe/${response.data.value.id}`);
+      })
+      .catch((_) => {
+        toast.error("Nie udalo się dodać nowego przepisu", {
+          draggable: true,
+          position: POSITION.TOP_RIGHT,
+        });
       });
-    });
+  }
 };
 </script>
 <template>

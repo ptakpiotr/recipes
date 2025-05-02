@@ -1,8 +1,8 @@
 import Dexie, { type EntityTable } from "dexie";
-import type { IGeneralRecipe } from "../../Types";
+import type { IGeneralRecipe, IRecipeCreateDtoOffline } from "../../Types";
 
 const db = new Dexie("GeneralRecipes") as Dexie & {
-  recipes: EntityTable<IGeneralRecipe, "id">;
+  recipes: EntityTable<IGeneralRecipe | IRecipeCreateDtoOffline>;
 };
 
 db.version(1).stores({
