@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: recipes-api
+          image: pioptak/recipes-api
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -100,5 +100,20 @@ spec:
                 configMapKeyRef:
                   name: api-cm
                   key: ConnectionStrings__Redis
+            - name: External__AiService
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: External__AiService
+            - name: Vapid__PublicKey
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Vapid__PublicKey          
+            - name: Vapid__PrivateKey
+              valueFrom:
+                configMapKeyRef:
+                  name: api-cm
+                  key: Vapid__PrivateKey    
           ports:
             - containerPort: 80

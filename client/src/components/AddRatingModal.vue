@@ -5,12 +5,11 @@ import type { IRatingCreateDto } from "../../Types";
 import StarsRating from "./StarsRating.vue";
 import Modal from "./Modal.vue";
 import axios from "axios";
-import router from "../router";
 
 const props = defineProps<Pick<IRatingCreateDto, "recipeId">>();
 const isOpen = ref<boolean>(true);
 
-const route = useRouter();
+const router = useRouter();
 
 const rating = ref<IRatingCreateDto>({
   rating: 0,

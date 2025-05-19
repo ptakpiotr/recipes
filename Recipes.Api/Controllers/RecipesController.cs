@@ -1,10 +1,6 @@
-﻿using System.Text;
-using System.Text.Json;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Org.BouncyCastle.Crypto.Macs;
 using Recipes.Api.Filters;
 using Recipes.Api.Models;
 using Recipes.Api.Services;
@@ -13,8 +9,6 @@ using Recipes.Application.Recipes.DTO;
 using Recipes.Application.Recipes.Queries;
 using Recipes.Domain.Recipes.Enums;
 using Recipes.Infrastructure.Common.Identity;
-using Recipes.Infrastructure.Common.Options;
-using WebPush;
 
 namespace Recipes.Api.Controllers;
 

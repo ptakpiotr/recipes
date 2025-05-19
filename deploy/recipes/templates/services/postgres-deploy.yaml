@@ -16,9 +16,9 @@ spec:
           image: postgres:14
           env:
             - name: POSTGRES_USER
-              value: usr
+              value: {{ .Values.db.user }}
             - name: POSTGRES_PASSWORD
-              value: max123456
+              value: {{ .Values.db.password }}
           resources:
             limits:
               memory: "256Mi"

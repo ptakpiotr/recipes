@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "db": {
+      "type": "object",
+      "properties": {
+        "database": { "type": "string" },
+        "user": { "type": "string" },
+        "password": { "type": "string" },
+        "storage": { "type": "string", "pattern": "^[0-9]+Gi$" }
+      },
+      "required": ["database", "user", "password", "storage"]
+    },
+    "redis": {
+      "type": "object",
+      "properties": {
+        "storage": { "type": "string", "pattern": "^[0-9]+Gi$" }
+      },
+      "required": ["storage"]
+    },
+    "isDev": { "type": "boolean" }
+  },
+  "required": ["db", "redis", "isDev"]
+}

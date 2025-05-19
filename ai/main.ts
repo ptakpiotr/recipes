@@ -3,7 +3,7 @@ import cors from "cors";
 import { createOllama } from "ollama-ai-provider";
 import { embed, generateObject, generateText, Message } from "ai";
 import pg from "pg";
-import { sentimentSchema, recipeSchema } from "./schemas.js";
+import { sentimentSchema } from "./schemas.js";
 import { config } from "dotenv";
 
 config();

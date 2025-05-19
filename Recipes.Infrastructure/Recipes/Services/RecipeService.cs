@@ -140,7 +140,7 @@ public class RecipeService(
         IList<RecipeCreateDto> recipes, CancellationToken token)
     {
         List<Task<OneOf<SuccessWithValue<RecipeReadDto>, Error>>> tasks = [];
-        //Potentially TODO - switch implementation to sth more performant
+        
         tasks.AddRange(recipes.Select(recipe => CreateRecipeAsync(recipe, token)));
 
         var res = await Task.WhenAll(tasks).ConfigureAwait(ConfigureAwaitOptions.None);

@@ -6,7 +6,7 @@ metadata:
     pv: redis-pv
 spec:
   capacity:
-    storage: 1Gi
+    storage: {{ .Values.redis.storage }}
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
@@ -14,4 +14,3 @@ spec:
   storageClassName: ssd
   hostPath:
     path: /mnt/redis
-

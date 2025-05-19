@@ -1,0 +1,8 @@
+db:
+  database: recipes_app
+  user: usr
+  password: max123456
+  storage: 1Gi
+redis:
+  storage: 1Gi
+isDev: true

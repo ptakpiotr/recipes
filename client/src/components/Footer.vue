@@ -10,7 +10,7 @@ import "leaflet/dist/leaflet.css";
 const isOpen = ref(false);
 const inspirationInput = ref("");
 const inspirationResult = ref("");
-const prompt = ref(null);
+const prompt = ref<any>(null);
 
 onMounted(() => {
   window.addEventListener("beforeinstallprompt", (evt) => {

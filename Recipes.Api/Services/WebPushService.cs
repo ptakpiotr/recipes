@@ -5,14 +5,14 @@ using WebPush;
 
 namespace Recipes.Api.Services;
 
-public class WebPushService(IOptionsSnapshot<VapidOptions> options) : IWebPushService
+public class WebPushService(IOptionsSnapshot<VapidOptions> options, IOptionsSnapshot<FrontendOptions> frontendOptions) : IWebPushService
 {
     public async Task SendPushNotificationAsync(string message, CancellationToken token)
     {
         var webPushClient = new WebPushClient();
 
         var pushSubscription = new PushSubscription(
-            "https://localhost:7151",
+            frontendOptions.Value.Url,
             options.Value.PublicKey,
             options.Value.PrivateKey
         );

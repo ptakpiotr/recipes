@@ -38,6 +38,11 @@ builder.Services.AddOptions<VapidOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<FrontendOptions>()
+    .Bind(builder.Configuration.GetSection("Frontend"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
 builder.Services.AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
 

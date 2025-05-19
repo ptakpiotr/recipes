@@ -15,7 +15,6 @@ self.addEventListener("fetch", (event) => {
     caches
       .match(event.request)
       .then((response) => {
-        console.log(event.request, response);
         if ("setAppBadge" in navigator) {
           //https://developer.mozilla.org/en-US/docs/Web/API/Badging_API
           navigator.setAppBadge(Math.floor(Math.random() * 100));

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: ai-deploy
+  ports:
+    - port: 7600
+      protocol: TCP
+      targetPort: 7600

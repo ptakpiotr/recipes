@@ -27,7 +27,7 @@ onMounted(async () => {
       await syncRecipesData(recipesData.data.value);
     }
   } catch (err) {
-    recipes.value = await getRecipesData();
+    recipes.value = (await getRecipesData()) as IGeneralRecipe[];
   }
 });
 </script>
