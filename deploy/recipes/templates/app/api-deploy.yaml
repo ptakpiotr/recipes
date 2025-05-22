@@ -117,3 +117,4 @@ spec:
                   key: Vapid__PrivateKey    
           ports:
             - containerPort: 80
+          
