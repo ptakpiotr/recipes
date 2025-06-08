@@ -10,6 +10,7 @@ import {
   MdRemove,
   MdShare,
   MdImportExport,
+  MdCopyAll,
 } from "vue-icons-plus/md";
 import RecipeSentiment from "../components/RecipeSentiment.vue";
 import AddRatingModal from "../components/AddRatingModal.vue";
@@ -124,6 +125,13 @@ const openFilteredRecipesView = (type: RecipeType) => {
 
   router.push(`/?filterType=${recipeType}`);
 };
+
+const copyDesc = async () => {
+  if (navigator.clipboard) {
+    await navigator.clipboard.writeText(recipe.value?.description ?? "");
+  }
+};
+
 </script>
 <template>
   <div>
@@ -176,7 +184,17 @@ const openFilteredRecipesView = (type: RecipeType) => {
             class="rounded-md w-full object-cover h-48"
           />
         </div>
-        <h2 class="text-xl font-bold text-gray-800 mb-2">{{ recipe.title }}</h2>
+        <div class="flex items-center">
+          <h2 class="text-xl font-bold text-gray-800 mb-2 flex-1">
+            {{ recipe.title }}
+          </h2>
+          <button
+            class="bg-gray-500 p-2 rounded-xl text-white cursor-pointer hover:bg-gray-700"
+            @click="copyDesc"
+          >
+            <MdCopyAll />
+          </button>
+        </div>
         <p class="text-gray-600 mb-4">
           <VueMarkdown :source="DOMPurify.sanitize(recipe.description)" />
         </p>
