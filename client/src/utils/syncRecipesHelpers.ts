@@ -9,8 +9,7 @@ function isFormData(
 }
 
 export const syncRecipesData = async (data: IGeneralRecipe[]) => {
-  await clearRecipes();
-  await db.recipes.bulkAdd(data);
+  await db.recipes.bulkAdd(data ?? []);
 };
 
 export const addSingleRecipe = async (recipe: IRecipeCreateDtoOffline) => {

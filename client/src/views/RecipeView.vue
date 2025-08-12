@@ -115,7 +115,7 @@ const exportRecipe = async () => {
 
   const stream = await file.createWritable();
 
-  await stream.write(JSON.stringify(recipe));
+  await stream.write(JSON.stringify(recipe.value));
 
   await stream.close();
 };
@@ -127,8 +127,8 @@ const openFilteredRecipesView = (type: RecipeType) => {
 };
 
 const copyDesc = async () => {
-  if (navigator.clipboard) {
-    await navigator.clipboard.writeText(recipe.value?.description ?? "");
+  if (navigator.clipboard && recipe.value?.description) {
+    await navigator.clipboard.writeText(recipe.value?.description);
   }
 };
 
